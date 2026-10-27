@@ -39,7 +39,7 @@
     </td>
     <td align="center" valign="top">
       <a href="">
-        <img src="https://avatars.githubusercontent.com/u/136472706" width="200px;" alt="Marcus Vinícuis"/>
+        <img src="" width="200px;" alt="Marcus Vinícuis"/>
       </a>
       <br />
       <p><b>Marcus Vinícuis</b></p>
