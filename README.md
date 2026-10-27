@@ -19,7 +19,7 @@
 
 <div align="center">
   <a href="https://github.com/MachadoCodes/frontend_acervo_de_alexandria/blob/main/README.md#readme-top">
-    <img src="Assets/images/aaLOGO.png" alt="Logo" width="300" height="300">
+    <img src="Assets/images/aaLOGOwtriangle.png" alt="Logo" width="300" height="300">
   </a>
 </div>
 
