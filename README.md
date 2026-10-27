@@ -2,8 +2,8 @@
 
 <div align="center">
   
-<h1>Trust Token - Frontend</h1>
-<h6>Interface Bancária e Sistema de Autenticação Ativa de Tokens Dinâmicos</h6>
+<h1>Frontend - Acervo de Alexandria</h1>
+<h6>e-commerce de livros</h6>
 </div>
 
 ***
@@ -38,8 +38,8 @@
       <p><a href="https://www.linkedin.com/in/miguel-martinho-rebequi-08753b271/">LinkedIn</a> | <a href="https://github.com/MiguelRebequi">GitHub</a></p>
     </td>
     <td align="center" valign="top">
-      <a href="https://github.com/GuilhermeChiuchi">
-        <img src="https://avatars.githubusercontent.com/u/136472706" width="200px;" alt="Guilherme Chiuchi Pereira"/>
+      <a href="">
+        <img src="https://avatars.githubusercontent.com/u/136472706" width="200px;" alt="Marcus Vinícuis"/>
       </a>
       <br />
       <p><b>Marcus Vinícuis</b></p>
