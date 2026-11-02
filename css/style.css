@@ -931,3 +931,195 @@ button, input {
         grid-template-columns: 1fr;
     }
 }
+
+/* ==========================================================================
+   Página de Detalhes do Produto (Layout 3 Colunas)
+   ========================================================================== */
+.product-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    /* Força a largura para 1200px, impedindo o esmagamento da coluna central */
+    width: min(100% - 2 * var(--spacing-md), var(--container-max-width));
+}
+
+/* Grid Superior: 3 Colunas */
+.product-grid-top {
+    display: grid;
+    grid-template-columns: 300px 1fr 300px;
+    gap: var(--spacing-xl);
+    align-items: start;
+}
+
+/* Coluna 1: Imagem (Borda cinza apagada) */
+.product-image-col {
+    border: 1px solid var(--color-divider);
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-sm);
+}
+
+.product-image {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Coluna 2: Textos */
+.product-info-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.product-title {
+    font-size: 2.2rem;
+    color: var(--color-text-main);
+    line-height: 1.2;
+}
+
+.product-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Espaçamento curto entre o título e o autor */
+}
+
+.product-author-name {
+    font-size: 1.1rem;
+    font-weight: 600; /* Leve negrito para dar presença */
+    color: var(--color-primary-blue); /* Azul oficial do Acervo de Alexandria */
+}
+
+.product-synopsis-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--color-text-main);
+}
+
+/* Coluna 3: Caixa de Compra */
+.product-buy-col {
+    border: 1px solid var(--color-divider);
+    border-radius: 8px; /* Cantos levemente arredondados */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06); /* Sombra suave para profundidade */
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.buy-price-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+}
+
+.stock-status {
+    color: #2e7d32; /* Verde indicando disponibilidade */
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+}
+
+.purchase-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    width: 100%;
+}
+
+.buy-quantity {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.qty-select {
+    padding: 4px 8px;
+    border: 1px solid var(--color-divider);
+    font-size: 1rem;
+    background: transparent;
+    border-radius: var(--radius-sm);
+}
+
+.btn-wishlist,
+.btn-add-cart {
+    width: 100%;
+    padding: 12px 0; /* Espaçamento interno vertical igual para ambos */
+    font-weight: 700;
+    font-size: 0.9rem; /* Fonte reduzida para não esmagar as laterais */
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: 0.2s;
+    white-space: nowrap;
+    text-align: center;
+    /* text-transform: uppercase; <-- Foi removido para respeitar o HTML */
+}
+
+/* Estilo do botão de Wishlist (Secundário) */
+.btn-wishlist {
+    background: transparent;
+    border: 1px solid var(--color-divider);
+    color: var(--color-text-main);
+}
+.btn-wishlist:hover {
+    background-color: #f0f0f0;
+}
+
+/* Estilo do botão de Carrinho (Primário - Cores Oficiais) */
+.btn-add-cart {
+    background-color: var(--color-primary-gold);
+    color: var(--color-primary-blue);
+    border: none;
+}
+.btn-add-cart:hover {
+    background-color: var(--color-primary-gold-dark);
+}
+
+/* Linha Inferior: Detalhes do Produto */
+.product-details-bottom {
+    border-top: 1px solid var(--color-divider);
+    border-bottom: 1px solid var(--color-divider);
+    padding: var(--spacing-xl) 0;
+    text-align: center;
+}
+
+.details-title {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+.specs-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    text-align: left;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+    .product-grid-top {
+        grid-template-columns: 280px 1fr;
+    }
+    .product-buy-col {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .product-grid-top {
+        grid-template-columns: 1fr;
+    }
+    .product-buy-col {
+        grid-column: span 1;
+    }
+    .specs-list {
+        grid-template-columns: 1fr;
+    }
+}
