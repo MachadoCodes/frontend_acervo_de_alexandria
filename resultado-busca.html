@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description"
+          content="Acervo de Alexandria: livraria online com livros infantis, juvenis, ficção e romance.">
+    <meta name="theme-color" content="#071E3A">
+    <title>Acervo de Alexandria — Resultado da busca</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Pinned axes + only the icons in use (icon names must be alphabetical) -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=account_circle,chevron_left,chevron_right,favorite,menu,pause,play_arrow,search,shopping_cart&display=block">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Modules are deferred by default -->
+    <script src="js/index.js" type="module"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Pular para o conteúdo</a>
+
+<header class="main-header" id="top" tabindex="-1">
+    <div class="header-bar">
+        <a class="logo-container" href="index.html">
+            <img src="assets/img/aaLOGO.png" alt="Acervo de Alexandria — página inicial"
+                 class="logo-img" width="180" height="90">
+        </a>
+
+        <form class="search-bar" role="search" action="/busca" method="get">
+            <label class="visually-hidden" for="searchInput">Buscar livros no acervo</label>
+            <input type="search" id="searchInput" name="q" class="search-input"
+                   placeholder="O que está procurando…" autocomplete="off" enterkeyhint="search">
+            <button type="submit" class="search-btn" aria-label="Buscar">
+                <span class="material-symbols-outlined" aria-hidden="true">search</span>
+            </button>
+        </form>
+
+        <nav class="user-menu" aria-label="Menu de usuário">
+            <a href="/wishlist" class="menu-item icon-link" aria-label="Lista de desejos">
+                <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+            </a>
+            <a href="/conta" class="menu-item icon-link" aria-label="Minha conta">
+                <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
+            </a>
+            <a href="/carrinho" class="menu-item icon-link" aria-label="Carrinho de compras">
+                <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Category nav lives inside the header: a single sticky element, no magic offsets -->
+    <nav class="category-nav" aria-label="Categorias">
+        <ul class="category-list">
+            <li class="category-item">
+                <button type="button" class="menu-trigger" aria-expanded="false" aria-controls="category-menu">
+                    <span class="material-symbols-outlined" aria-hidden="true">menu</span> Categorias
+                </button>
+            </li>
+            <li class="category-item"><a href="/infantil">Infantil</a></li>
+            <li class="category-item"><a href="/juvenil">Juvenil</a></li>
+            <li class="category-item"><a href="/ficcao">Ficção</a></li>
+            <li class="category-item"><a href="/romance">Romance</a></li>
+        </ul>
+    </nav>
+
+    <!-- Menu Dropdown de Categorias -->
+    <div class="category-menu" id="category-menu" hidden>
+        <ul class="category-menu-list">
+            <li><a href="/categoria/fantasia">Fantasia</a></li>
+            <li><a href="/categoria/ficcao-cientifica">Ficção científica</a></li>
+            <li><a href="/categoria/romance">Romance</a></li>
+            <li><a href="/categoria/misterio">Mistério e suspense</a></li>
+            <li><a href="/categoria/terror">Terror</a></li>
+            <li><a href="/categoria/ficcao-historica">Ficção histórica</a></li>
+            <li><a href="/categoria/acao">Ação e aventura</a></li>
+            <li><a href="/categoria/biografias">Biografias e memórias</a></li>
+            <li><a href="/categoria/autoajuda">Autoajuda</a></li>
+            <li><a href="/categoria/historia">História</a></li>
+            <li><a href="/categoria/ciencia">Ciência e tecnologia</a></li>
+            <li><a href="/categoria/negocios">Negócios e economia</a></li>
+            <li><a href="/categoria/filosofia">Filosofia e sociologia</a></li>
+            <li><a href="/categoria/religiao">Religião e espiritualidade</a></li>
+            <li><a href="/categoria/saude">Saúde</a></li>
+            <li><a href="/categoria/culinaria">Culinária</a></li>
+            <li><a href="/categoria/poesia">Poesia</a></li>
+            <li><a href="/categoria/hqs">HQs e Mangás</a></li>
+            <li><a href="/categoria/infantis">Livros infantis</a></li>
+            <li><a href="/categoria/infantojuvenil">Infantojuvenil</a></li>
+            <li><a href="/categoria/didaticos">Obras didáticas</a></li>
+        </ul>
+    </div>
+</header>
+
+<main class="main-content search-layout" id="main" tabindex="-1">
+    <header class="search-header">
+        <h1 class="search-title">Resultados para: <span class="highlight">"Tolkien"</span></h1>
+        <p class="search-count">Exibindo 4 livros encontrados</p>
+    </header>
+
+    <div class="search-body">
+        <aside class="search-filters" aria-label="Filtros de busca">
+            <h2 class="filters-title">Filtros</h2>
+
+            <!-- Gênero -->
+            <fieldset class="filter-group filter-scrollable">
+                <legend>Gênero</legend>
+                <label><input type="checkbox" name="gen" value="fantasia" checked> Fantasia</label>
+                <label><input type="checkbox" name="gen" value="ficcao-cientifica"> Ficção científica</label>
+                <label><input type="checkbox" name="gen" value="romance"> Romance</label>
+                <label><input type="checkbox" name="gen" value="misterio"> Mistério e suspense</label>
+                <label><input type="checkbox" name="gen" value="terror"> Terror</label>
+                <label><input type="checkbox" name="gen" value="ficcao-historica"> Ficção histórica</label>
+                <label><input type="checkbox" name="gen" value="acao"> Ação e aventura</label>
+                <label><input type="checkbox" name="gen" value="biografias"> Biografias e memórias</label>
+                <label><input type="checkbox" name="gen" value="autoajuda"> Autoajuda</label>
+                <label><input type="checkbox" name="gen" value="historia"> História</label>
+                <label><input type="checkbox" name="gen" value="ciencia"> Ciência e tecnologia</label>
+                <label><input type="checkbox" name="gen" value="negocios"> Negócios e economia</label>
+                <label><input type="checkbox" name="gen" value="filosofia"> Filosofia e sociologia</label>
+                <label><input type="checkbox" name="gen" value="religiao"> Religião e espiritualidade</label>
+                <label><input type="checkbox" name="gen" value="saude"> Saúde</label>
+                <label><input type="checkbox" name="gen" value="culinaria"> Culinária</label>
+                <label><input type="checkbox" name="gen" value="poesia"> Poesia</label>
+                <label><input type="checkbox" name="gen" value="hqs"> HQs e Mangás</label>
+                <label><input type="checkbox" name="gen" value="infantis"> Livros infantis</label>
+                <label><input type="checkbox" name="gen" value="infantojuvenil"> Infantojuvenil</label>
+                <label><input type="checkbox" name="gen" value="didaticos"> Obras didáticas</label>
+            </fieldset>
+
+            <!-- Preço -->
+            <fieldset class="filter-group">
+                <legend>Preço</legend>
+                <label><input type="checkbox" name="preco" value="ate-50"> Até R$ 50,00</label>
+                <label><input type="checkbox" name="preco" value="50-100"> R$ 50,00 a R$ 100,00</label>
+                <label><input type="checkbox" name="preco" value="100-200"> R$ 100,00 a R$ 200,00</label>
+                <label><input type="checkbox" name="preco" value="acima-200" checked> Acima de R$ 200,00</label>
+
+                <!-- Custom Price Range -->
+                <div class="custom-price-range">
+                    <input type="number" id="minPrice" placeholder="Mín" min="0" aria-label="Preço mínimo">
+                    <span>-</span>
+                    <input type="number" id="maxPrice" placeholder="Máx" min="0" aria-label="Preço máximo">
+                    <button type="button" class="btn-price-apply" aria-label="Aplicar faixa de preço">Ir</button>
+                </div>
+            </fieldset>
+
+            <!-- Formato -->
+            <fieldset class="filter-group">
+                <legend>Formato do Livro</legend>
+                <label><input type="checkbox" name="formato" value="comum"> Capa comum</label>
+                <label><input type="checkbox" name="formato" value="dura" checked> Capa dura</label>
+                <label><input type="checkbox" name="formato" value="ebook"> E-book</label>
+                <label><input type="checkbox" name="formato" value="audiobook"> Audiobook</label>
+            </fieldset>
+
+            <!-- Avaliação -->
+            <fieldset class="filter-group">
+                <legend>Avaliação</legend>
+                <label class="star-rating"><input type="checkbox" name="aval" value="5"> ★★★★★ (5)</label>
+                <label class="star-rating"><input type="checkbox" name="aval" value="4"> ★★★★☆ (4 ou mais)</label>
+                <label class="star-rating"><input type="checkbox" name="aval" value="3"> ★★★☆☆ (3 ou mais)</label>
+                <label class="star-rating"><input type="checkbox" name="aval" value="2"> ★★☆☆☆ (2 ou mais)</label>
+                <label class="star-rating"><input type="checkbox" name="aval" value="1"> ★☆☆☆☆ (1 ou mais)</label>
+            </fieldset>
+
+            <!-- Editora -->
+            <fieldset class="filter-group filter-scrollable">
+                <legend>Editora</legend>
+                <label><input type="checkbox" name="editora" value="harpercollins" checked> HarperCollins</label>
+                <label><input type="checkbox" name="editora" value="intrinseca"> Intrínseca</label>
+                <label><input type="checkbox" name="editora" value="rocco"> Rocco</label>
+                <label><input type="checkbox" name="editora" value="arquiero"> Arqueiro</label>
+                <label><input type="checkbox" name="editora" value="companhia"> Cia. das Letras</label>
+            </fieldset>
+
+            <!-- Idioma -->
+            <fieldset class="filter-group">
+                <legend>Idioma</legend>
+                <label><input type="checkbox" name="idioma" value="pt-br" checked> Português (Brasil)</label>
+                <label><input type="checkbox" name="idioma" value="en"> Inglês</label>
+                <label><input type="checkbox" name="idioma" value="es"> Espanhol</label>
+            </fieldset>
+
+            <!-- Ano de Publicação -->
+            <fieldset class="filter-group">
+                <legend>Lançamento</legend>
+                <label><input type="checkbox" name="ano" value="2026"> 2026</label>
+                <label><input type="checkbox" name="ano" value="2025"> 2025</label>
+                <label><input type="checkbox" name="ano" value="2024"> 2024</label>
+                <label><input type="checkbox" name="ano" value="anteriores"> Anos anteriores</label>
+            </fieldset>
+        </aside>
+
+        <!-- Resultados -->
+        <section class="search-results" aria-label="Livros encontrados">
+            <div class="results-grid">
+                <!-- Livro 1 -->
+                <article class="book-card">
+                    <img src="assets/img/livro-aneis.jpg" alt="" class="book-cover" width="120" height="180" loading="lazy">
+                    <h3 class="book-title"><a class="book-link" href="/livros/box-trilogia">Box Trilogia O Senhor dos Anéis</a></h3>
+                    <p class="book-author">J. R. R. Tolkien</p>
+                    <p class="book-price"><data value="207.20">R$ 207,20</data></p>
+                </article>
+                <!-- Livro 2 -->
+                <article class="book-card">
+                    <img src="assets/img/livro-hobbit.jpg" alt="" class="book-cover" width="120" height="180" loading="lazy">
+                    <h3 class="book-title"><a class="book-link" href="/livros/o-hobbit">O Hobbit</a></h3>
+                    <p class="book-author">J. R. R. Tolkien</p>
+                    <p class="book-price"><data value="49.90">R$ 49,90</data></p>
+                </article>
+                <!-- Livro 3 -->
+                <article class="book-card">
+                    <img src="assets/img/livro-hp.jpg" alt="" class="book-cover" width="120" height="180" loading="lazy">
+                    <h3 class="book-title"><a class="book-link" href="/livros/box-harry">Box Harry Potter Scholastic</a></h3>
+                    <p class="book-author">J.K. Rowling</p>
+                    <p class="book-price"><data value="307.51">R$ 307,51</data></p>
+                </article>
+                <!-- Livro 4 -->
+                <article class="book-card">
+                    <img src="assets/img/livro-terra.jpg" alt="" class="book-cover" width="120" height="180" loading="lazy">
+                    <h3 class="book-title"><a class="book-link" href="/livros/terra-a-deriva">Terra à deriva</a></h3>
+                    <p class="book-author">Cixin Liu</p>
+                    <p class="book-price"><data value="39.89">R$ 39,89</data></p>
+                </article>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer class="main-footer">
+    <button type="button" id="backToTopBtn" class="back-to-top-bar">
+        Voltar ao Topo
+    </button>
+    <div class="footer-links-container">
+        <nav class="footer-nav" aria-label="Links de rodapé">
+            <a href="/sobre" class="footer-link">Sobre</a>
+            <a href="/contato" class="footer-link">Contato</a>
+            <a href="/ajuda" class="footer-link">Ajuda</a>
+            <a href="/social" class="footer-link">Social</a>
+        </nav>
+    </div>
+    <div class="footer-copyright">
+        <p>&copy; 2026 Acervo de Alexandria. Todos os direitos reservados.</p>
+    </div>
+</footer>
+<script src="js/search.js"></script>
+</body>
+</html>
