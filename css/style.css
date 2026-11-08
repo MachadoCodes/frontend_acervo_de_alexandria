@@ -119,6 +119,7 @@ button, input, select, textarea {
    Header (um único elemento sticky: barra + navegação de categorias)
    ========================================================================== */
 .main-header {
+    position: relative; /* âncora do .category-menu no mobile, onde o header não é sticky */
     background: var(--color-bg-white);
     box-shadow: var(--shadow-header);
     z-index: 100;
@@ -317,9 +318,21 @@ button, input, select, textarea {
     padding: 12px;
     background: none;
     border: 0;
+    border-radius: var(--radius-sm); /* Adiciona o mesmo arredondamento dos links */
     cursor: pointer;
     font-weight: 600;
     font-size: 0.9rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/*
+  Aplica as cores oficiais (azul e branco) quando passar o mouse
+  E mantém aceso caso o menu esteja aberto (aria-expanded="true")
+*/
+.menu-trigger:hover,
+.menu-trigger[aria-expanded="true"] {
+    background-color: var(--color-primary-blue);
+    color: var(--color-bg-white);
 }
 
 .category-item a {
@@ -860,6 +873,7 @@ button, input, select, textarea {
 .filter-scrollable::-webkit-scrollbar {
     width: 6px;
 }
+
 .filter-scrollable::-webkit-scrollbar-thumb {
     background-color: var(--color-divider);
     border-radius: var(--radius-pill);
@@ -1071,6 +1085,7 @@ button, input, select, textarea {
     border: 1px solid var(--color-divider);
     color: var(--color-text-main);
 }
+
 .btn-wishlist:hover {
     background-color: #f0f0f0;
 }
@@ -1081,6 +1096,7 @@ button, input, select, textarea {
     color: var(--color-primary-blue);
     border: none;
 }
+
 .btn-add-cart:hover {
     background-color: var(--color-primary-gold-dark);
 }
@@ -1112,6 +1128,7 @@ button, input, select, textarea {
     .product-grid-top {
         grid-template-columns: 280px 1fr;
     }
+
     .product-buy-col {
         grid-column: span 2;
     }
@@ -1121,9 +1138,11 @@ button, input, select, textarea {
     .product-grid-top {
         grid-template-columns: 1fr;
     }
+
     .product-buy-col {
         grid-column: span 1;
     }
+
     .specs-list {
         grid-template-columns: 1fr;
     }
@@ -1157,14 +1176,22 @@ button, input, select, textarea {
 .step-item {
     flex: 1;
     text-align: center;
-    padding: 12px 20px;
+    /* O padding foi movido para o .step-content para manter toda a área clicável */
     background-color: var(--color-divider);
     color: var(--color-text-muted);
     font-weight: 700;
     position: relative;
-    /* Cria o formato de seta da esquerda para a direita */
     clip-path: polygon(calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%, 20px 50%, 0 0);
-    margin-left: -15px; /* Sobrepõe levemente as setas */
+    margin-left: -15px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+/* Conteúdo interno da etapa (link ou texto) */
+.step-content {
+    display: block;
+    padding: 12px 20px;
+    color: inherit;
+    text-decoration: none;
 }
 
 .step-item:first-child {
@@ -1176,10 +1203,28 @@ button, input, select, textarea {
     clip-path: polygon(100% 0, 100% 50%, 100% 100%, 0 100%, 20px 50%, 0 0);
 }
 
+/* Etapa atual */
 .step-item.step-active {
     background-color: var(--color-primary-gold);
     color: var(--color-primary-blue);
     z-index: 2;
+}
+
+/* Etapas concluídas (que possuem link) recebem efeito hover */
+.step-item.step-completed:hover {
+    background-color: #cfcfcf;
+    color: var(--color-primary-blue);
+}
+
+/* Foco de acessibilidade via teclado */
+.step-item.step-completed .step-content:focus-visible {
+    outline: none;
+}
+
+.step-item.step-completed:has(.step-content:focus-visible) {
+    outline: 3px solid var(--color-primary-blue);
+    outline-offset: 2px;
+    z-index: 3;
 }
 
 /* Grid do Carrinho */
@@ -1312,8 +1357,8 @@ button, input, select, textarea {
 .cart-item-controls {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;   /* Remover e preço terminam na mesma borda direita */
-    gap: var(--spacing-md);  /* respiro entre o botão e a quantidade */
+    align-items: flex-end; /* Remover e preço terminam na mesma borda direita */
+    gap: var(--spacing-md); /* respiro entre o botão e a quantidade */
     min-width: 180px;
 }
 
@@ -1623,4 +1668,718 @@ button, input, select, textarea {
     .checkout-footer-bar .btn-next-step {
         width: 100%;
     }
+}
+
+/* ==========================================================================
+   Página de Pagamento
+   ========================================================================== */
+
+/* Evita que conteúdo largo estoure as colunas do grid */
+.checkout-container > * {
+    min-width: 0;
+}
+
+/* Complementos de botões compartilhados (pode mover para a seção base depois) */
+.btn-next-step {
+    display: inline-block;
+    font-size: 1rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+.btn-next-step:disabled {
+    background-color: var(--color-divider);
+    color: #595959;
+    cursor: not-allowed;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+    background-color: #051528;
+}
+
+.link-inline {
+    color: var(--color-primary-blue);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.link-inline:hover {
+    text-decoration-thickness: 2px;
+}
+
+/* Cartão que agrupa métodos + finalização */
+.payment-card {
+    border: 1px solid var(--color-divider);
+    border-radius: 8px;
+    background: var(--color-bg-white);
+    overflow: hidden; /* os cantos arredondados valem para tudo que está dentro */
+}
+
+.payment-methods {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.payment-method-block {
+    --payment-indent: calc(var(--spacing-lg) + 20px + var(--spacing-md)); /* padding + rádio + gap */
+}
+
+.payment-method-block + .payment-method-block {
+    border-top: 1px solid var(--color-divider);
+}
+
+/* Método selecionado ganha destaque */
+.payment-method-block:has(input[type="radio"]:checked) {
+    background-color: #fffdf8;
+    box-shadow: inset 4px 0 0 var(--color-primary-gold);
+}
+
+.payment-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.payment-header:hover {
+    background-color: #fcfcfc;
+}
+
+.payment-header:has(input:focus-visible) {
+    outline: 3px solid var(--color-primary-blue);
+    outline-offset: -3px;
+}
+
+.payment-header input[type="radio"] {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: var(--color-primary-blue);
+    cursor: pointer;
+}
+
+.payment-header input[type="radio"]:focus-visible {
+    outline: none; /* o anel é desenhado pelo .payment-header */
+}
+
+.payment-title {
+    flex: 1 1 auto;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+}
+
+.payment-icons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-left: auto;
+    color: var(--color-text-muted);
+}
+
+.payment-icons .material-symbols-outlined {
+    font-size: 28px;
+}
+
+/* ==========================================================================
+   Ícones de Pagamento (Bandeiras SVG)
+   ========================================================================== */
+.payment-icon-img {
+    height: 22px; /* Mantém todas as marcas proporcionais ao texto */
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+/* Afasta levemente os ícones uns dos outros para não grudarem */
+.payment-icons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    color: var(--color-text-muted);
+}
+
+.payment-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: 0 var(--spacing-lg) var(--spacing-lg) var(--payment-indent);
+}
+
+.payment-body p {
+    margin: 0;
+}
+
+/* Instruções */
+.pix-instructions,
+.boleto-instructions,
+.wallet-instructions {
+    padding: var(--spacing-md);
+    background: #f4f7fa;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    color: var(--color-text-main);
+}
+
+.pix-instructions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-align: center;
+}
+
+.qr-icon {
+    font-size: 48px;
+    color: var(--color-primary-blue);
+}
+
+.pix-discount {
+    color: #2e7d32;
+}
+
+.crypto-fee-warning {
+    padding: 10px 12px;
+    background-color: #ffebee;
+    border-left: 4px solid #c62828;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    color: #b71c1c;
+}
+
+/* Validação nativa só depois que o usuário interage com o campo */
+.form-input:user-invalid {
+    padding: 9px 11px;
+    border: 2px solid #c62828;
+}
+
+/* Finalização do pedido */
+.place-order-footer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl);
+    background-color: #fcfcfc;
+    border-top: 1px solid var(--color-divider);
+}
+
+.terms-group {
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px dashed var(--color-divider);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    accent-color: var(--color-primary-blue);
+    cursor: pointer;
+}
+
+.terms-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+}
+
+.terms-subtext {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--color-text-muted);
+}
+
+.checkout-action-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.secure-checkout {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+.secure-checkout .material-symbols-outlined {
+    font-size: 16px;
+}
+
+/* Sidebar */
+.checkout-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+/* Sticky só quando cabe na tela: evita conteúdo cortado em telas baixas */
+@media (min-width: 993px) and (min-height: 840px) {
+    .checkout-sidebar {
+        position: sticky;
+        top: 190px; /* altura do header sticky (~173px) + respiro */
+    }
+}
+
+.summary-box {
+    padding: var(--spacing-lg);
+    background-color: var(--color-bg-white);
+    border: 1px solid var(--color-divider);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.box-title {
+    margin: 0 0 var(--spacing-md);
+    font-size: 1.2rem;
+    color: var(--color-primary-blue);
+}
+
+.box-header .box-title {
+    margin: 0;
+}
+
+.delivery-summary-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--color-text-main);
+}
+
+.delivery-summary-text p {
+    margin: 0;
+}
+
+.promo-box {
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.promo-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--color-primary-blue);
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    padding: 4px 0;
+    transition: color 0.2s ease;
+}
+
+.promo-toggle-btn:hover {
+    color: var(--color-primary-gold-dark);
+}
+
+.promo-toggle-btn .material-symbols-outlined {
+    font-size: 20px;
+}
+
+.promo-content {
+    margin-top: var(--spacing-md);
+}
+
+.promo-content.is-hidden {
+    display: none;
+}
+
+.promo-input-group {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.promo-input-group .form-input {
+    flex: 1;
+    min-width: 0;
+}
+
+.promo-message {
+    margin: var(--spacing-sm) 0 0;
+    font-size: 0.85rem;
+    color: #c62828;
+}
+
+.promo-message:empty {
+    display: none;
+}
+
+.summary-line--discount span:last-child {
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .payment-method-block {
+        --payment-indent: calc(var(--spacing-md) + 20px + var(--spacing-md));
+    }
+
+    .payment-header {
+        padding: var(--spacing-md);
+    }
+
+    .payment-body {
+        padding: 0 var(--spacing-md) var(--spacing-md) var(--payment-indent);
+    }
+
+    .place-order-footer {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+
+    .checkout-action-row {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .secure-checkout {
+        justify-content: center;
+    }
+
+    .summary-box {
+        padding: var(--spacing-md);
+    }
+}
+
+/* ==========================================================================
+   Menu Dropdown de Conta (Header)
+   ========================================================================== */
+.account-menu-container {
+    position: relative;
+    display: inline-block;
+}
+
+.account-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 50%;
+    transform: translateX(50%);
+    background-color: var(--color-bg-white);
+    min-width: 200px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-divider);
+    z-index: 101;
+    padding: 8px 0;
+    flex-direction: column;
+}
+
+/* Exibe o menu ao passar o mouse no contêiner */
+.account-menu-container:hover .account-dropdown {
+    display: flex;
+}
+
+.dropdown-item {
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 0.95rem;
+    color: var(--color-text-main);
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: var(--color-primary-blue);
+    color: var(--color-primary-gold);
+}
+
+/* ==========================================================================
+   Modal de Login / Recuperação
+   ========================================================================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0; /* Ocupa a tela inteira */
+    background-color: rgba(7, 30, 58, 0.7); /* Azul primário com opacidade */
+    backdrop-filter: blur(3px); /* Efeito embaçado no fundo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-box {
+    background: var(--color-bg-white);
+    width: 100%;
+    max-width: 450px;
+    padding: var(--spacing-xl);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.btn-close-modal {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-close-modal:hover {
+    color: #c62828;
+}
+
+.modal-title {
+    font-size: 1.6rem;
+    color: var(--color-primary-blue);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.modal-desc {
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+/* Campo de senha com botão de olho */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper .form-input {
+    padding-right: 48px; /* Espaço para o ícone não sobrepor o texto */
+}
+
+.btn-toggle-password {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    display: flex;
+}
+
+.btn-toggle-password:hover {
+    color: var(--color-primary-blue);
+}
+
+/* Opções (Lembrar / Esqueci senha) */
+.login-options-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: -8px;
+}
+
+.btn-forgot-password,
+.btn-back-login {
+    background: none;
+    border: none;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+/* Botões do formulário */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end; /* Botão no canto inferior direito */
+    margin-top: var(--spacing-sm);
+}
+
+.modal-actions-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-sm);
+}
+
+.btn-login-submit {
+    padding: 12px 32px;
+    font-size: 1rem;
+}
+
+.modal-footer-text {
+    text-align: center;
+    margin-top: var(--spacing-md);
+    font-size: 0.95rem;
+    color: var(--color-text-main);
+}
+
+/* Fake Captcha */
+.mock-captcha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    border: 1px solid var(--color-divider);
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.captcha-logo {
+    color: var(--color-primary-blue);
+    font-size: 28px !important;
+}
+
+/* Reseta a aparência de botão para ele parecer um ícone comum do header */
+.btn-header-login {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: var(--color-bg-white);
+}
+
+.btn-header-login:hover {
+    color: var(--color-primary-gold);
+}
+
+/* Garante que qualquer visão do modal com a classe is-hidden realmente suma */
+.is-hidden {
+    display: none !important;
+}
+
+/* Estilo do botão de voltar */
+.btn-back-login {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: none;
+    border: none;
+    color: var(--color-primary-blue);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-back-login:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   Tooltips (Balões indicativos) para os Ícones do Header
+   ========================================================================== */
+.icon-link {
+    position: relative; /* Transforma o ícone na âncora do balão */
+}
+
+/* Corpo do balão flutuante (O :not exclui o botão de conta) */
+.icon-link:not(#btn-icon-login)::after {
+    content: attr(aria-label);
+    position: absolute;
+    top: 130%;
+    left: 50%;
+    transform: translate(-50%, 6px);
+    background-color: var(--color-primary-blue);
+    color: var(--color-primary-gold);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 200;
+}
+
+/* Setinha do balão (O :not exclui o botão de conta) */
+.icon-link:not(#btn-icon-login)::before {
+    content: "";
+    position: absolute;
+    top: 130%;
+    left: 50%;
+    transform: translate(-50%, -4px);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent var(--color-primary-blue) transparent;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 200;
+}
+
+/* Animação suave ao passar o mouse */
+.icon-link:not(#btn-icon-login):hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+}
+
+.icon-link:not(#btn-icon-login):hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -10px);
+}
+
+/* ==========================================================================
+   Badge do Carrinho de Compras
+   ========================================================================== */
+.cart-badge {
+    position: absolute;
+    top: -4px;
+    right: -8px;
+    background-color: var(--color-primary-gold);
+    color: var(--color-primary-blue);
+    font-size: 0.75rem;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid var(--color-primary-blue); /* Cria um contorno para destacar do ícone */
+    line-height: 1;
+    z-index: 2; /* Garante que fique acima do ícone */
 }

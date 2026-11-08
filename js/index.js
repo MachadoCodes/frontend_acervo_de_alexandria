@@ -80,10 +80,33 @@ function setupCategoryMenu() {
         panel.hidden = !open;
     };
 
+    // 1. Lógica de Clique (Mantida para Celulares e Navegação por Teclado)
     trigger.addEventListener('click', () => {
         setOpen(trigger.getAttribute('aria-expanded') !== 'true');
     });
 
+    // 2. Lógica de Hover para Desktop (Abre ao passar o mouse)
+    let hoverTimeout;
+
+    const handleMouseEnter = () => {
+        clearTimeout(hoverTimeout);
+        setOpen(true);
+    };
+
+    const handleMouseLeave = () => {
+        // Delay de 150ms permite que o cursor atravesse o espaço entre o botão e o painel
+        hoverTimeout = setTimeout(() => {
+            setOpen(false);
+        }, 150);
+    };
+
+    // Ocultar/Mostrar monitorando tanto o botão quanto o próprio menu aberto
+    trigger.addEventListener('mouseenter', handleMouseEnter);
+    trigger.addEventListener('mouseleave', handleMouseLeave);
+    panel.addEventListener('mouseenter', handleMouseEnter);
+    panel.addEventListener('mouseleave', handleMouseLeave);
+
+    // 3. Fechamento por Acessibilidade (Tecla ESC)
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && !panel.hidden) {
             setOpen(false);
@@ -91,6 +114,7 @@ function setupCategoryMenu() {
         }
     });
 
+    // 4. Fechamento por Clique fora da área do menu
     document.addEventListener('click', (event) => {
         if (panel.hidden) return;
         if (!panel.contains(event.target) && !trigger.contains(event.target)) {
@@ -330,3 +354,139 @@ setupBackToTop();
 setupCategoryMenu();
 document.querySelectorAll('.hero-banner').forEach(setupHeroCarousel);
 document.querySelectorAll('.book-shelf').forEach(setupShelfCarousel);
+
+/* ==========================================================================
+   Lógica do Modal de Login Global
+   ========================================================================== */
+const modalOverlay = document.getElementById('login-modal');
+const btnOpenLogin = document.getElementById('btn-open-login'); // Opção do dropdown
+const btnIconLogin = document.getElementById('btn-icon-login'); // Clique direto no ícone
+const btnCloseLogin = document.getElementById('btn-close-login');
+
+// Elementos das Visões
+const loginView = document.getElementById('login-view');
+const forgotPasswordView = document.getElementById('forgot-password-view');
+const btnShowForgot = document.getElementById('btn-show-forgot');
+const btnBackLogin = document.getElementById('btn-back-login');
+
+// Elementos do Formulário e Senha
+const pwdInput = document.getElementById('login-password');
+const togglePwdBtn = document.getElementById('toggle-password-btn');
+const togglePwdIcon = document.getElementById('toggle-password-icon');
+
+const formLogin = document.getElementById('form-login');
+const formForgot = document.getElementById('form-forgot');
+
+if (modalOverlay) {
+    // 1. Abrir e Fechar Modal
+    function openModal() {
+        modalOverlay.classList.remove('is-hidden');
+        // Reseta sempre para a visão de login ao abrir
+        loginView.classList.remove('is-hidden');
+        forgotPasswordView.classList.add('is-hidden');
+    }
+
+    function closeModal() {
+        modalOverlay.classList.add('is-hidden');
+    }
+
+    // O modal abre tanto pelo dropdown quanto pelo clique no ícone
+    if (btnOpenLogin) btnOpenLogin.addEventListener('click', openModal);
+    if (btnIconLogin) btnIconLogin.addEventListener('click', openModal);
+    if (btnCloseLogin) btnCloseLogin.addEventListener('click', closeModal);
+
+    // Fechar ao clicar fora da caixa branca
+    modalOverlay.addEventListener('click', (event) => {
+        if (event.target === modalOverlay) {
+            closeModal();
+        }
+    });
+
+    // Fechar com a tecla ESC
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !modalOverlay.classList.contains('is-hidden')) {
+            closeModal();
+        }
+    });
+
+    // 2. Transição: Login <-> Esqueci Senha (substituição total)
+    if (btnShowForgot) {
+        btnShowForgot.addEventListener('click', () => {
+            loginView.classList.add('is-hidden');
+            forgotPasswordView.classList.remove('is-hidden');
+        });
+    }
+
+    if (btnBackLogin) {
+        btnBackLogin.addEventListener('click', () => {
+            forgotPasswordView.classList.add('is-hidden');
+            loginView.classList.remove('is-hidden');
+        });
+    }
+
+    // 3. Mostrar/Esconder Senha
+    if (togglePwdBtn && pwdInput) {
+        togglePwdBtn.addEventListener('click', () => {
+            const isPassword = pwdInput.type === 'password';
+            pwdInput.type = isPassword ? 'text' : 'password';
+            togglePwdIcon.textContent = isPassword ? 'visibility' : 'visibility_off';
+        });
+    }
+
+    // 4. Submissão dos Formulários (Mockup)
+    if (formLogin) {
+        formLogin.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Simulação: Usuário autenticado com sucesso!');
+            closeModal();
+        });
+    }
+
+    if (formForgot) {
+        formForgot.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Se o e-mail existir, você receberá as instruções em breve!');
+            closeModal();
+        });
+    }
+}
+
+/* ==========================================================================
+   Lógica do Contador do Carrinho (Badge)
+   ========================================================================== */
+function updateCartBadge() {
+    const badge = document.getElementById('cart-badge');
+    if (!badge) return;
+
+    // A lógica real vai ler os dados que o seu site salvar no navegador (localStorage).
+    // Supondo que você salve uma lista na chave 'alexandria_cart':
+    let cartCount = 0;
+    try {
+        const cartData = JSON.parse(localStorage.getItem('alexandria_cart')) || [];
+        // Soma a quantidade de cada item na lista (se houver a propriedade 'qty', senão apenas conta os itens)
+        cartCount = cartData.reduce((total, item) => total + (item.qty || 1), 0);
+    } catch (error) {
+        console.error('Erro ao ler o carrinho:', error);
+    }
+
+    // SIMULAÇÃO: Descomente a linha abaixo para forçar o número e ver como fica o design!
+    // cartCount = 3;
+
+    // Atualiza a interface
+    if (cartCount > 0) {
+        badge.textContent = cartCount > 99 ? '99+' : cartCount;
+        badge.hidden = false;
+    } else {
+        badge.hidden = true;
+    }
+}
+
+// Atualiza o contador imediatamente ao carregar a página
+updateCartBadge();
+
+// Se o usuário abrir duas abas do site e adicionar algo em uma, a outra aba atualiza na hora
+window.addEventListener('storage', (event) => {
+    if (event.key === 'alexandria_cart') {
+        updateCartBadge();
+    }
+});

@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Finalize seu pedido no Acervo de Alexandria.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#071E3A">
+    <title>Pagamento — Acervo de Alexandria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Só os ícones usados (ordem alfabética obrigatória) -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=account_circle,barcode,close,favorite,lock,menu,pix,qr_code_2,search,sell,shopping_cart,verified_user,visibility,visibility_off&display=block">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/index.js" type="module"></script>
+    <script src="js/pagamento.js" type="module"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Pular para o conteúdo</a>
+<a class="skip-link" href="#main">Pular para o conteúdo</a>
+
+<header class="main-header" id="top" tabindex="-1">
+    <div class="header-bar">
+        <a class="logo-container" href="index.html">
+            <img src="assets/img/aaLOGO.png" alt="Acervo de Alexandria — página inicial" class="logo-img" width="180"
+                 height="90">
+        </a>
+        <form class="search-bar" role="search" action="resultado-busca.html" method="get">
+            <label class="visually-hidden" for="searchInput">Buscar livros no acervo</label>
+            <input type="search" id="searchInput" name="q" class="search-input" placeholder="O que está procurando…"
+                   autocomplete="off" enterkeyhint="search">
+            <button type="submit" class="search-btn" aria-label="Buscar">
+                <span class="material-symbols-outlined" aria-hidden="true">search</span>
+            </button>
+        </form>
+        <nav class="user-menu" aria-label="Menu de usuário">
+            <!-- Os links agora apontam diretamente para os arquivos .html -->
+            <a href="wishlist.html" class="menu-item icon-link" aria-label="Lista de desejos">
+                <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+            </a>
+            <div class="account-menu-container">
+                <!-- O ícone principal agora é um botão que também abre o modal -->
+                <button type="button" id="btn-icon-login" class="menu-item icon-link btn-header-login"
+                        aria-label="Entrar na minha conta">
+                    <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
+                </button>
+                <!-- Menu suspenso (Dropdown) mantido -->
+                <div class="account-dropdown">
+                    <button type="button" id="btn-open-login" class="dropdown-item">Entrar na minha conta</button>
+                    <a href="cadastro.html" class="dropdown-item">Criar uma conta</a>
+                </div>
+            </div>
+            <a href="carrinho.html" class="menu-item icon-link" aria-label="Carrinho">
+                <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
+                <!-- Bolinha do contador -->
+                <span class="cart-badge" id="cart-badge" hidden>0</span>
+            </a>
+        </nav>
+    </div>
+    <nav class="category-nav" aria-label="Categorias">
+        <ul class="category-list">
+            <li class="category-item">
+                <button type="button" class="menu-trigger" aria-expanded="false" aria-controls="category-menu">
+                    <span class="material-symbols-outlined" aria-hidden="true">menu</span> Categorias
+                </button>
+            </li>
+            <li class="category-item"><a href="/infantil">Infantil</a></li>
+            <li class="category-item"><a href="/juvenil">Juvenil</a></li>
+            <li class="category-item"><a href="/ficcao">Ficção</a></li>
+            <li class="category-item"><a href="/romance">Romance</a></li>
+        </ul>
+    </nav>
+    <div class="category-menu" id="category-menu" hidden>
+        <ul class="category-menu-list">
+            <li><a href="/categoria/fantasia">Fantasia</a></li>
+            <li><a href="/categoria/ficcao-cientifica">Ficção científica</a></li>
+            <li><a href="/categoria/romance">Romance</a></li>
+            <li><a href="/categoria/misterio">Mistério e suspense</a></li>
+            <li><a href="/categoria/terror">Terror</a></li>
+            <li><a href="/categoria/ficcao-historica">Ficção histórica</a></li>
+            <li><a href="/categoria/acao">Ação e aventura</a></li>
+            <li><a href="/categoria/biografias">Biografias e memórias</a></li>
+            <li><a href="/categoria/autoajuda">Autoajuda</a></li>
+            <li><a href="/categoria/historia">História</a></li>
+            <li><a href="/categoria/ciencia">Ciência e tecnologia</a></li>
+            <li><a href="/categoria/negocios">Negócios e economia</a></li>
+            <li><a href="/categoria/filosofia">Filosofia e sociologia</a></li>
+            <li><a href="/categoria/religiao">Religião e espiritualidade</a></li>
+            <li><a href="/categoria/saude">Saúde</a></li>
+            <li><a href="/categoria/culinaria">Culinária</a></li>
+            <li><a href="/categoria/poesia">Poesia</a></li>
+            <li><a href="/categoria/hqs">HQs e Mangás</a></li>
+            <li><a href="/categoria/infantis">Livros infantis</a></li>
+            <li><a href="/categoria/infantojuvenil">Infantojuvenil</a></li>
+            <li><a href="/categoria/didaticos">Obras didáticas</a></li>
+        </ul>
+    </div>
+</header>
+
+<main class="main-content checkout-layout" id="main" tabindex="-1">
+    <h1 class="visually-hidden">Pagamento</h1>
+
+    <nav class="checkout-progress" aria-label="Progresso do checkout">
+        <ol class="progress-steps">
+            <!-- Etapas concluídas ganham a classe 'step-completed' e a tag <a> -->
+            <li class="step-item step-completed">
+                <a href="carrinho.html" class="step-content">Carrinho</a>
+            </li>
+            <li class="step-item step-completed">
+                <a href="entrega.html" class="step-content">Entrega</a>
+            </li>
+            <!-- Etapa atual (e futuras) não têm link, usam <span> -->
+            <li class="step-item step-active" aria-current="step">
+                <span class="step-content">Pagamento</span>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="checkout-container">
+
+        <!-- Coluna esquerda: métodos de pagamento + finalização -->
+        <section class="payment-methods-section" aria-label="Pagamento">
+            <!--
+                method="post": dados de pagamento NUNCA devem ir na URL.
+                Os campos do cartão não têm "name" de propósito, para não serem enviados ao seu servidor.
+                Em produção, troque-os pelos campos hospedados do gateway (tokenização).
+            -->
+            <form action="sucesso.html" method="post" id="payment-form" class="payment-card">
+
+                <fieldset class="payment-methods">
+                    <legend class="visually-hidden">Forma de pagamento</legend>
+
+                    <!-- Pix -->
+                    <div class="payment-method-block">
+                        <label class="payment-header">
+                            <input type="radio" name="payment_type" value="pix" aria-controls="body-pix">
+                            <span class="payment-title">Pix</span>
+                            <span class="payment-icons" aria-hidden="true">
+                                <span class="material-symbols-outlined" style="color: #32bcad;">pix</span>
+                            </span>
+                        </label>
+                        <div class="payment-body" id="body-pix" hidden>
+                            <div class="pix-instructions">
+                                <span class="material-symbols-outlined qr-icon" aria-hidden="true">qr_code_2</span>
+                                <p>O código Pix será gerado na próxima etapa.</p>
+                                <p class="pix-discount">Você tem <strong>5% de desconto</strong> pagando com Pix.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Carteiras digitais -->
+                    <div class="payment-method-block">
+                        <label class="payment-header">
+                            <input type="radio" name="payment_type" value="digital_wallet" aria-controls="body-digital-wallet">
+                            <span class="payment-title">Carteiras Digitais</span>
+                            <span class="payment-icons" aria-hidden="true">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Pay_Logo_%282020%29.svg" alt="Google Pay" class="payment-icon-img">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" alt="Apple Pay" class="payment-icon-img">
+                            </span>
+                        </label>
+                        <div class="payment-body" id="body-digital-wallet" hidden>
+                            <p class="wallet-instructions">Ao finalizar o pedido, você será redirecionado para autorizar
+                                o pagamento em sua carteira digital.</p>
+                        </div>
+                    </div>
+
+                    <!-- PayPal -->
+                    <div class="payment-method-block">
+                        <label class="payment-header">
+                            <input type="radio" name="payment_type" value="paypal" aria-controls="body-paypal">
+                            <span class="payment-title">PayPal</span>
+                            <span class="payment-icons" aria-hidden="true">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" class="payment-icon-img">
+                            </span>
+                        </label>
+                        <div class="payment-body" id="body-paypal" hidden>
+                            <p class="wallet-instructions">Você será redirecionado para o ambiente seguro do PayPal para
+                                concluir o pagamento.</p>
+                        </div>
+                    </div>
+
+                    <!-- Criptomoedas -->
+                    <div class="payment-method-block">
+                        <label class="payment-header">
+                            <input type="radio" name="payment_type" value="crypto" aria-controls="body-crypto">
+                            <span class="payment-title">Criptomoedas</span>
+                            <span class="payment-icons" aria-hidden="true">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" alt="Bitcoin" class="payment-icon-img">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/Ethereum_logo_translucent.svg" alt="Ethereum" class="payment-icon-img" style="height: 26px;">
+                            </span>
+                        </label>
+                        <div class="payment-body" id="body-crypto" hidden>
+                            <p>Pague usando sua carteira de Bitcoin ou Ethereum. Um QR code de transferência será gerado
+                                na próxima tela.</p>
+                            <p class="crypto-fee-warning"><strong>Atenção:</strong> é aplicada uma taxa operacional de
+                                2% sobre o valor total do pedido em pagamentos via rede blockchain.</p>
+                        </div>
+                    </div>
+
+                    <!-- Boleto -->
+                    <div class="payment-method-block">
+                        <label class="payment-header">
+                            <input type="radio" name="payment_type" value="boleto" aria-controls="body-boleto">
+                            <span class="payment-title">Boleto Bancário</span>
+                            <span class="payment-icons" aria-hidden="true">
+                                <span class="material-symbols-outlined">barcode</span>
+                            </span>
+                        </label>
+                        <div class="payment-body" id="body-boleto" hidden>
+                            <p class="boleto-instructions">O boleto será gerado após a confirmação. O pagamento pode
+                                levar até 2 dias úteis para ser compensado e o envio será feito apenas após a
+                                aprovação.</p>
+                        </div>
+                    </div>
+
+                    <!-- Cartão de crédito -->
+                    <div class="payment-method-block">
+                        <label class="payment-header">
+                            <input type="radio" name="payment_type" value="credit_card" aria-controls="body-credit-card">
+                            <span class="payment-title">Cartão de Crédito</span>
+                            <span class="payment-icons" aria-hidden="true">
+                                <!-- Link da Visa corrigido -->
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/Visa_Inc._logo_%282014%E2%80%932021%29.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original" alt="Visa" class="payment-icon-img">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg" alt="Mastercard" class="payment-icon-img">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original" alt="Amex" class="payment-icon-img">
+                            </span>
+                        </label>
+                        <div class="payment-body" id="body-credit-card" hidden>
+                            <div class="form-group">
+                                <label for="cardNumber">Número do cartão</label>
+                                <input type="text" id="cardNumber" class="form-input" inputmode="numeric"
+                                       autocomplete="cc-number" placeholder="0000 0000 0000 0000" maxlength="19"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cardName">Nome impresso no cartão</label>
+                                <input type="text" id="cardName" class="form-input"
+                                       autocomplete="cc-name" placeholder="NOME DO TITULAR" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cardExpiry">Validade (MM/AA)</label>
+                                    <input type="text" id="cardExpiry" class="form-input" inputmode="numeric"
+                                           autocomplete="cc-exp" placeholder="MM/AA" maxlength="5"
+                                           pattern="(0[1-9]|1[0-2])/[0-9]{2}" title="Use o formato MM/AA" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cardCvv">CVV</label>
+                                    <input type="text" id="cardCvv" class="form-input" inputmode="numeric"
+                                           autocomplete="cc-csc" placeholder="123" maxlength="4"
+                                           pattern="[0-9]{3,4}" title="3 ou 4 dígitos" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="cardInstallments">Parcelamento</label>
+                                <select id="cardInstallments" name="installments" class="form-input" required>
+                                    <option value="1">1x de R$ 322,90 sem juros</option>
+                                    <option value="2">2x de R$ 161,45 sem juros</option>
+                                    <option value="3">3x de R$ 107,63 sem juros</option>
+                                    <option value="4">4x de R$ 80,73 sem juros</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Finalização -->
+                <div class="place-order-footer">
+                    <div class="terms-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="terms-checkbox" name="terms_accepted" value="true" required>
+                            <span class="terms-text">
+                                Eu concordo com os
+                                <a href="/termos" target="_blank" rel="noopener"
+                                   class="link-inline">termos e condições<span class="visually-hidden"> (abre em nova aba)</span></a>
+                                <span class="terms-subtext">Por favor, leia atentamente. Este acordo estabelece direitos e obrigações legais importantes.</span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="checkout-action-row">
+                        <p class="secure-checkout">
+                            <span class="material-symbols-outlined" aria-hidden="true">lock</span> Pagamento seguro
+                        </p>
+                        <button type="submit" class="btn-next-step" id="btn-submit-order" disabled>
+                            SELECIONE UM MÉTODO
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Coluna direita: resumo -->
+        <aside class="checkout-sidebar" aria-label="Resumo final">
+
+            <div class="summary-box">
+                <div class="box-header">
+                    <h2 class="box-title">Dados de entrega</h2>
+                    <a href="entrega.html" class="link-inline">Alterar</a>
+                </div>
+                <div class="delivery-summary-text">
+                    <p><strong>Renato Gonçalves Machado</strong></p>
+                    <p>Av. Paulista, 1578, Apto 42</p>
+                    <p>Bela Vista - São Paulo, SP</p>
+                    <p>01310-200</p>
+                    <hr class="summary-divider">
+                    <p><strong>Método:</strong> Entrega Padrão (5 a 7 dias)</p>
+                </div>
+            </div>
+
+            <!-- Formulário próprio: Enter aqui NÃO envia o pedido -->
+            <form class="summary-box promo-box" id="promo-form" novalidate>
+                <!-- O título agora é um botão de revelação -->
+                <button type="button" class="promo-toggle-btn" id="promo-toggle-btn" aria-expanded="false"
+                        aria-controls="promo-content">
+                    <span class="material-symbols-outlined" aria-hidden="true">sell</span>
+                    Inserir código promocional
+                </button>
+
+                <!-- Conteúdo oculto inicialmente via atributo 'hidden' -->
+                <div id="promo-content" class="promo-content is-hidden">
+                    <div class="promo-input-group">
+                        <label class="visually-hidden" for="promoCode">Código promocional</label>
+                        <input type="text" id="promoCode" class="form-input" placeholder="Digite seu cupom"
+                               autocomplete="off" autocapitalize="characters" spellcheck="false">
+                        <button type="submit" class="btn-secondary">APLICAR</button>
+                    </div>
+                    <p class="promo-message" id="promo-message" role="status"></p>
+                </div>
+            </form>
+
+            <div class="summary-box" id="order-summary" data-subtotal-cents="30700" data-shipping-cents="1590">
+                <h2 class="box-title">Resumo do pedido</h2>
+                <div class="summary-line">
+                    <span>Subtotal</span>
+                    <span>R$ 307,00</span>
+                </div>
+                <div class="summary-line">
+                    <span>Frete</span>
+                    <span>R$ 15,90</span>
+                </div>
+
+                <!-- NOVA LINHA: Fica invisível até que o cupom seja aplicado -->
+                <div class="summary-line summary-line--discount" id="promo-line" hidden>
+                    <span id="promo-label">Cupom</span>
+                    <span id="promo-value"></span>
+                </div>
+
+                <!-- Essa linha já existe (é a do Pix/Cripto) -->
+                <div class="summary-line" id="adjustment-line" hidden>
+                    <span id="adjustment-label"></span>
+                    <span id="adjustment-value"></span>
+                </div>
+                <hr class="summary-divider">
+                <div class="summary-line summary-total">
+                    <span>Total a pagar</span>
+                    <span id="final-total" aria-live="polite">R$ 322,90</span>
+                </div>
+            </div>
+
+        </aside>
+    </div>
+</main>
+
+<footer class="main-footer">
+    <button type="button" id="backToTopBtn" class="back-to-top-bar">Voltar ao Topo</button>
+    <div class="footer-links-container">
+        <nav class="footer-nav" aria-label="Links de rodapé">
+            <a href="/sobre" class="footer-link">Sobre</a>
+            <a href="/contato" class="footer-link">Contato</a>
+            <a href="/ajuda" class="footer-link">Ajuda</a>
+            <a href="/social" class="footer-link">Social</a>
+        </nav>
+    </div>
+    <div class="footer-copyright">
+        <p>&copy; 2026 Acervo de Alexandria. Todos os direitos reservados.</p>
+    </div>
+</footer>
+<!-- Modal Global de Login / Recuperação -->
+<!-- Modal Global de Login / Recuperação -->
+<div class="modal-overlay is-hidden" id="login-modal" aria-modal="true" role="dialog">
+    <div class="modal-box">
+        <button class="btn-close-modal" id="btn-close-login" aria-label="Fechar modal">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+
+        <!-- Visão 1: Login -->
+        <div id="login-view">
+            <h2 class="modal-title">Entrar</h2>
+            <form id="form-login" class="modal-form">
+                <div class="form-group">
+                    <label for="login-email">E-mail</label>
+                    <input type="email" id="login-email" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" class="form-input" required>
+                        <button type="button" class="btn-toggle-password" id="toggle-password-btn"
+                                aria-label="Mostrar senha">
+                            <span class="material-symbols-outlined" id="toggle-password-icon">visibility_off</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="login-options-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="remember-me">
+                        <span class="terms-text">Lembrar de mim</span>
+                    </label>
+                    <button type="button" class="link-inline btn-forgot-password" id="btn-show-forgot">Esqueci minha
+                        senha
+                    </button>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary btn-login-submit">ENTRAR</button>
+                </div>
+                <div class="modal-footer-text">
+                    Ainda não possui uma conta? <a href="cadastro.html" class="link-inline">Crie uma</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Visão 2: Esqueci a Senha -->
+        <div id="forgot-password-view" class="is-hidden">
+            <!-- Botão de voltar no canto superior esquerdo -->
+            <button type="button" class="btn-back-login" id="btn-back-login" aria-label="Voltar para o login">&lt;
+                voltar
+            </button>
+
+            <h2 class="modal-title">Recuperar Senha</h2>
+            <p class="modal-desc">Enviaremos as instruções de recuperação para o seu e-mail, caso ele exista em nossos
+                registros.</p>
+
+            <form id="form-forgot" class="modal-form">
+                <div class="form-group">
+                    <label for="recovery-email">E-mail</label>
+                    <input type="email" id="recovery-email" class="form-input" required>
+                </div>
+
+                <!-- Mockup de Captcha -->
+                <div class="mock-captcha">
+                    <label class="checkbox-label">
+                        <input type="checkbox" required>
+                        <span class="terms-text">Não sou um robô</span>
+                    </label>
+                    <span class="material-symbols-outlined captcha-logo">verified_user</span>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary btn-login-submit">RESETAR</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
