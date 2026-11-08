@@ -137,7 +137,7 @@
                             <input type="radio" name="payment_type" value="pix" aria-controls="body-pix">
                             <span class="payment-title">Pix</span>
                             <span class="payment-icons" aria-hidden="true">
-                                <span class="material-symbols-outlined" style="color: #32bcad;">pix</span>
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Pix_%28Brazil%29_logo.svg" alt="Pix" class="payment-icon-img">
                             </span>
                         </label>
                         <div class="payment-body" id="body-pix" hidden>
@@ -220,10 +220,9 @@
                             <input type="radio" name="payment_type" value="credit_card" aria-controls="body-credit-card">
                             <span class="payment-title">Cartão de Crédito</span>
                             <span class="payment-icons" aria-hidden="true">
-                                <!-- Link da Visa corrigido -->
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/Visa_Inc._logo_%282014%E2%80%932021%29.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original" alt="Visa" class="payment-icon-img">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/Visa_Inc._logo_%282014–2021%29.svg" alt="Visa" class="payment-icon-img">
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg" alt="Mastercard" class="payment-icon-img">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original" alt="Amex" class="payment-icon-img">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg" alt="Amex" class="payment-icon-img">
                             </span>
                         </label>
                         <div class="payment-body" id="body-credit-card" hidden>
@@ -374,10 +373,21 @@
         </nav>
     </div>
     <div class="footer-copyright">
-        <p>&copy; 2026 Acervo de Alexandria. Todos os direitos reservados.</p>
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Acervo de Alexandria. Todos os direitos reservados.</p>
+
+            <!-- Logos de pagamento -->
+            <div class="footer-payment-methods" aria-label="Métodos de pagamento aceitos">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/Visa_Inc._logo_%282014–2021%29.svg" alt="Visa" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg" alt="Mastercard" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg" alt="Amex" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Pix_%28Brazil%29_logo.svg" alt="Pix" class="footer-pay-img">
+                <span class="material-symbols-outlined footer-pay-icon" aria-hidden="true">barcode</span>
+            </div>
+        </div>
     </div>
 </footer>
-<!-- Modal Global de Login / Recuperação -->
 <!-- Modal Global de Login / Recuperação -->
 <div class="modal-overlay is-hidden" id="login-modal" aria-modal="true" role="dialog">
     <div class="modal-box">
