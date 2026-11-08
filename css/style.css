@@ -2460,3 +2460,191 @@ button, input, select, textarea {
         justify-content: center;
     }
 }
+
+/* ==========================================================================
+   Página de Cadastro / Registro
+   ========================================================================== */
+.register-layout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-block: var(--spacing-xl);
+    /* Garante que o card fique centralizado no espaço vazio entre header e footer */
+    min-height: calc(100vh - var(--header-height) - 150px);
+}
+
+.register-container {
+    width: 100%;
+    max-width: 680px;
+    background-color: var(--color-bg-white);
+    border: 1px solid var(--color-divider);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    padding: var(--spacing-xl);
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    border-bottom: 1px dashed var(--color-divider);
+    padding-bottom: var(--spacing-md);
+}
+
+.register-title {
+    font-size: 2rem;
+    color: var(--color-primary-blue);
+    margin-bottom: var(--spacing-sm);
+}
+
+.register-subtitle {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+}
+
+.form-section {
+    border: none;
+    margin-bottom: var(--spacing-lg);
+}
+
+.section-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-primary-gold-dark);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--color-primary-gold);
+    width: 100%;
+    display: block;
+}
+
+.register-form .form-row {
+    margin-bottom: var(--spacing-md);
+}
+
+.register-form .form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.password-hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+}
+
+.register-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px dashed var(--color-divider);
+}
+
+.btn-submit-register {
+    margin-top: var(--spacing-md);
+    padding: 14px;
+    font-size: 1.1rem;
+    width: 100%;
+}
+
+.register-footer {
+    text-align: center;
+    margin-top: var(--spacing-lg);
+    font-size: 0.95rem;
+    color: var(--color-text-main);
+}
+
+/* Responsividade do Cadastro */
+@media (max-width: 768px) {
+    .register-layout {
+        padding-block: var(--spacing-md);
+    }
+
+    .register-container {
+        padding: var(--spacing-md);
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+    }
+}
+
+/* ==========================================================================
+   Modificadores Exclusivos do Formulário de Cadastro
+   ========================================================================== */
+/* Desliga o UPPERCASE padrão do botão primário apenas para este botão */
+.btn-submit-register {
+    text-transform: none;
+}
+
+/* Estrutura para Celular (DDI + Número) */
+.phone-group {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.phone-code {
+    width: 130px;
+    flex-shrink: 0;
+}
+
+/* Controle de largura pela metade */
+.half-width {
+    width: 50%;
+}
+
+.phone-code {
+    width: 80px; /* Reduzido, pois mostrará apenas +55, +1, etc. */
+    flex-shrink: 0;
+}
+
+/* Grids do Endereço (Desktop) */
+.address-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.address-row-2 {
+    display: grid;
+    grid-template-columns: 140px 1fr; /* Número recebe 140px, complemento o resto */
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Linha País + Celular */
+.country-phone-row {
+    display: grid;
+    grid-template-columns: 220px 1fr; /* 220px crava exatamente o tamanho do texto do País */
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Desabilita botões inativos simulando o visual do pagamento */
+.btn-submit-register:disabled {
+    background-color: var(--color-divider);
+    color: #595959;
+    cursor: not-allowed;
+}
+
+/* Responsividade do Formulário */
+@media (max-width: 768px) {
+    .phone-group {
+        flex-direction: column;
+    }
+
+    .phone-code {
+        width: 100%;
+    }
+
+    .half-width {
+        width: 100%; /* No celular, os campos de 50% voltam a ocupar a tela toda */
+    }
+
+    .country-phone-row,
+    .address-row-3,
+    .address-row-2 {
+        grid-template-columns: 1fr;
+    }
+}
