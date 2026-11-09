@@ -64,49 +64,54 @@ function setupBackToTop() {
 /* ==========================================================================
    Category menu
    ========================================================================== */
-/**
- * Category menu disclosure (button + panel).
- * Closes on Escape (returning focus to the button) and on outside click.
- */
 function setupCategoryMenu() {
     const trigger = document.querySelector('.menu-trigger');
     if (!trigger) return;
-
     const panel = document.getElementById(trigger.getAttribute('aria-controls'));
     if (!panel) return;
 
+    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+    let closeTimer = 0;
+
     const setOpen = (open) => {
+        clearTimeout(closeTimer);
         trigger.setAttribute('aria-expanded', String(open));
         panel.hidden = !open;
     };
 
-    // 1. Lógica de Clique (Mantida para Celulares e Navegação por Teclado)
-    trigger.addEventListener('click', () => {
-        setOpen(trigger.getAttribute('aria-expanded') !== 'true');
+    const scheduleClose = () => {
+        clearTimeout(closeTimer);
+        // 150ms deixam o cursor atravessar o espaço entre o botão e o painel
+        closeTimer = setTimeout(() => setOpen(false), 150);
+    };
+
+    trigger.addEventListener('click', (event) => {
+        const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+        const isMouseClick = canHover.matches && event.detail > 0;
+        if (isMouseClick) {
+            setOpen(true); // o hover já abriu: o clique não deve fechar
+        } else {
+            setOpen(!isOpen); // teclado e toque alternam
+            if (!isOpen && event.detail === 0) panel.querySelector('a')?.focus();
+        }
     });
 
-    // 2. Lógica de Hover para Desktop (Abre ao passar o mouse)
-    let hoverTimeout;
+    // Hover só para mouse (toque emula eventos de mouse e conflitaria com o clique)
+    [trigger, panel].forEach((element) => {
+        element.addEventListener('pointerenter', (event) => {
+            if (event.pointerType === 'mouse') setOpen(true);
+        });
+        element.addEventListener('pointerleave', (event) => {
+            if (event.pointerType === 'mouse') scheduleClose();
+        });
+    });
 
-    const handleMouseEnter = () => {
-        clearTimeout(hoverTimeout);
-        setOpen(true);
-    };
+    // Fecha quando o foco do teclado sai do botão e do painel
+    document.addEventListener('focusin', (event) => {
+        if (panel.hidden) return;
+        if (!trigger.contains(event.target) && !panel.contains(event.target)) setOpen(false);
+    });
 
-    const handleMouseLeave = () => {
-        // Delay de 150ms permite que o cursor atravesse o espaço entre o botão e o painel
-        hoverTimeout = setTimeout(() => {
-            setOpen(false);
-        }, 150);
-    };
-
-    // Ocultar/Mostrar monitorando tanto o botão quanto o próprio menu aberto
-    trigger.addEventListener('mouseenter', handleMouseEnter);
-    trigger.addEventListener('mouseleave', handleMouseLeave);
-    panel.addEventListener('mouseenter', handleMouseEnter);
-    panel.addEventListener('mouseleave', handleMouseLeave);
-
-    // 3. Fechamento por Acessibilidade (Tecla ESC)
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && !panel.hidden) {
             setOpen(false);
@@ -114,12 +119,9 @@ function setupCategoryMenu() {
         }
     });
 
-    // 4. Fechamento por Clique fora da área do menu
     document.addEventListener('click', (event) => {
         if (panel.hidden) return;
-        if (!panel.contains(event.target) && !trigger.contains(event.target)) {
-            setOpen(false);
-        }
+        if (!panel.contains(event.target) && !trigger.contains(event.target)) setOpen(false);
     });
 }
 
@@ -261,10 +263,6 @@ function setupHeroCarousel(hero) {
 /* ==========================================================================
    Book shelf carousel (scroll-snap + generated arrows and page dots)
    ========================================================================== */
-/**
- * Without JS the shelf is still natively scrollable; arrows and dots are an enhancement
- * and only appear when there are more cards than fit on screen.
- */
 function setupShelfCarousel(shelf) {
     const viewport = shelf.querySelector('.shelf-viewport');
     const track = shelf.querySelector('.shelf-carousel');
@@ -348,145 +346,206 @@ function setupShelfCarousel(shelf) {
 }
 
 /* ==========================================================================
+   Modal de login (<dialog> nativo, criado uma única vez para todas as páginas)
+   ========================================================================== */
+// String ESTÁTICA: HTML do Modal (com autocomplete desativado para testes/apresentação)
+const LOGIN_MODAL_HTML = `
+<dialog class="modal" id="login-modal" aria-labelledby="login-title">
+    <div class="modal-box">
+        <button type="button" class="btn-close-modal" id="btn-close-login" aria-label="Fechar">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
+        <div id="login-view">
+            <h2 class="modal-title" id="login-title">Entrar</h2>
+            <!-- autocomplete="off" no form e nos inputs para bloquear o navegador -->
+            <form id="form-login" class="modal-form" method="post" action="/login" autocomplete="off">
+                <div class="form-group">
+                    <label for="login-email">E-mail</label>
+                    <input type="email" id="login-email" name="username" class="form-input"
+                           placeholder="exemplo@email.com.br" autocomplete="off" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <div class="password-wrapper">
+                        <!-- new-password é um truque para o navegador não sugerir senhas salvas -->
+                        <input type="password" id="login-password" name="password" class="form-input"
+                               autocomplete="new-password" required>
+                        <button type="button" class="btn-toggle-password" id="toggle-password-btn"
+                                aria-label="Mostrar senha">
+                            <span class="material-symbols-outlined" id="toggle-password-icon"
+                                  aria-hidden="true">visibility_off</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="login-options-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="remember-me">
+                        <span class="terms-text">Lembrar de mim</span>
+                    </label>
+                    <button type="button" class="link-inline btn-forgot-password" id="btn-show-forgot">
+                        Esqueci minha senha
+                    </button>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary btn-login-submit">ENTRAR</button>
+                </div>
+                <div class="modal-footer-text">
+                    Ainda não possui uma conta? <a href="cadastro.html" class="link-inline">Crie uma</a>
+                </div>
+            </form>
+        </div>
+        
+        <div id="forgot-password-view" hidden>
+            <button type="button" class="btn-back-login" id="btn-back-login">
+                <span aria-hidden="true">&lt;</span> Voltar
+            </button>
+            <h2 class="modal-title" id="forgot-title">Recuperar Senha</h2>
+            <p class="modal-desc">Enviaremos as instruções de recuperação para o seu e-mail, caso ele exista em nossos registros.</p>
+            <form id="form-forgot" class="modal-form" method="post" action="/recuperar-senha" autocomplete="off">
+                <div class="form-group">
+                    <label for="recovery-email">E-mail</label>
+                    <input type="email" id="recovery-email" name="email" class="form-input"
+                           placeholder="exemplo@email.com.br" autocomplete="off" required>
+                </div>
+                <div class="mock-captcha">
+                    <label class="checkbox-label">
+                        <input type="checkbox" required>
+                        <span class="terms-text">Não sou um robô</span>
+                    </label>
+                    <span class="material-symbols-outlined captcha-logo" aria-hidden="true">verified_user</span>
+                </div>
+                <p class="modal-status" id="forgot-status" role="status"></p>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary btn-login-submit">RESETAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</dialog>`;
+
+function setupLoginModal() {
+    const openers = document.querySelectorAll('#btn-open-login, #btn-icon-login');
+    if (openers.length === 0) return;
+
+    document.body.insertAdjacentHTML('beforeend', LOGIN_MODAL_HTML);
+    const dialog = document.getElementById('login-modal');
+    if (typeof dialog.showModal !== 'function') return;
+
+    const loginView = dialog.querySelector('#login-view');
+    const forgotView = dialog.querySelector('#forgot-password-view');
+    const loginEmail = dialog.querySelector('#login-email');
+    const recoveryEmail = dialog.querySelector('#recovery-email');
+    const forgotStatus = dialog.querySelector('#forgot-status');
+    const passwordInput = dialog.querySelector('#login-password');
+    const toggleButton = dialog.querySelector('#toggle-password-btn');
+    const toggleIcon = dialog.querySelector('#toggle-password-icon');
+
+    const showView = (name) => {
+        loginView.hidden = name !== 'login';
+        forgotView.hidden = name !== 'forgot';
+        dialog.setAttribute('aria-labelledby', name === 'login' ? 'login-title' : 'forgot-title');
+    };
+
+    const setPasswordVisible = (visible) => {
+        passwordInput.type = visible ? 'text' : 'password';
+        toggleIcon.textContent = visible ? 'visibility' : 'visibility_off';
+        toggleButton.setAttribute('aria-label', visible ? 'Ocultar senha' : 'Mostrar senha');
+    };
+
+    // Abrir: força a limpeza dos formulários toda vez que o modal é invocado
+    openers.forEach((button) =>
+        button.addEventListener('click', () => {
+            dialog.querySelectorAll('form').forEach((form) => form.reset()); // Esvazia tudo
+            showView('login');
+            dialog.showModal();
+            loginEmail.focus();
+        })
+    );
+
+    dialog.querySelector('#btn-close-login').addEventListener('click', () => dialog.close());
+
+    let pressStartedOnBackdrop = false;
+    dialog.addEventListener('pointerdown', (event) => {
+        pressStartedOnBackdrop = event.target === dialog;
+    });
+    dialog.addEventListener('click', (event) => {
+        if (pressStartedOnBackdrop && event.target === dialog) dialog.close();
+    });
+
+    dialog.addEventListener('close', () => {
+        dialog.querySelectorAll('form').forEach((form) => form.reset());
+        forgotStatus.textContent = '';
+        setPasswordVisible(false);
+    });
+
+    dialog.querySelector('#btn-show-forgot').addEventListener('click', () => {
+        showView('forgot');
+        recoveryEmail.focus();
+    });
+
+    dialog.querySelector('#btn-back-login').addEventListener('click', () => {
+        showView('login');
+        loginEmail.focus();
+    });
+
+    toggleButton.addEventListener('click', () => {
+        setPasswordVisible(passwordInput.type === 'password');
+    });
+
+    dialog.querySelector('#form-login').addEventListener('submit', (event) => {
+        event.preventDefault();
+        dialog.close();
+    });
+    dialog.querySelector('#form-forgot').addEventListener('submit', (event) => {
+        event.preventDefault();
+        forgotStatus.textContent =
+            'Se o e-mail existir em nossos registros, você receberá as instruções em breve.';
+    });
+}
+
+/* ==========================================================================
+   Contador do carrinho (badge)
+   ========================================================================== */
+const CART_STORAGE_KEY = 'alexandria_cart';
+
+function readCartCount() {
+    try {
+        const items = JSON.parse(localStorage.getItem(CART_STORAGE_KEY));
+        if (!Array.isArray(items)) return 0;
+        // localStorage é editável pelo usuário: só aceita inteiros positivos
+        return items.reduce((total, item) => {
+            const qty = Number.isInteger(item?.qty) && item.qty > 0 ? Math.min(item.qty, 999) : 1;
+            return total + qty;
+        }, 0);
+    } catch {
+        return 0;
+    }
+}
+
+function updateCartBadge() {
+    const badge = document.getElementById('cart-badge');
+    if (!badge) return;
+    const count = readCartCount();
+    badge.textContent = count > 99 ? '99+' : String(count);
+    badge.hidden = count === 0;
+    // O aria-label do link substitui o conteúdo interno: sem isto o leitor de tela ignora o número
+    badge.closest('a')?.setAttribute(
+        'aria-label',
+        count > 0 ? `Carrinho, ${count} ${count === 1 ? 'item' : 'itens'}` : 'Carrinho'
+    );
+}
+
+/* ==========================================================================
    Init
    ========================================================================== */
 setupBackToTop();
 setupCategoryMenu();
+setupLoginModal();
+updateCartBadge();
 document.querySelectorAll('.hero-banner').forEach(setupHeroCarousel);
 document.querySelectorAll('.book-shelf').forEach(setupShelfCarousel);
 
-/* ==========================================================================
-   Lógica do Modal de Login Global
-   ========================================================================== */
-const modalOverlay = document.getElementById('login-modal');
-const btnOpenLogin = document.getElementById('btn-open-login'); // Opção do dropdown
-const btnIconLogin = document.getElementById('btn-icon-login'); // Clique direto no ícone
-const btnCloseLogin = document.getElementById('btn-close-login');
-
-// Elementos das Visões
-const loginView = document.getElementById('login-view');
-const forgotPasswordView = document.getElementById('forgot-password-view');
-const btnShowForgot = document.getElementById('btn-show-forgot');
-const btnBackLogin = document.getElementById('btn-back-login');
-
-// Elementos do Formulário e Senha
-const pwdInput = document.getElementById('login-password');
-const togglePwdBtn = document.getElementById('toggle-password-btn');
-const togglePwdIcon = document.getElementById('toggle-password-icon');
-
-const formLogin = document.getElementById('form-login');
-const formForgot = document.getElementById('form-forgot');
-
-if (modalOverlay) {
-    // 1. Abrir e Fechar Modal
-    function openModal() {
-        modalOverlay.classList.remove('is-hidden');
-        // Reseta sempre para a visão de login ao abrir
-        loginView.classList.remove('is-hidden');
-        forgotPasswordView.classList.add('is-hidden');
-    }
-
-    function closeModal() {
-        modalOverlay.classList.add('is-hidden');
-    }
-
-    // O modal abre tanto pelo dropdown quanto pelo clique no ícone
-    if (btnOpenLogin) btnOpenLogin.addEventListener('click', openModal);
-    if (btnIconLogin) btnIconLogin.addEventListener('click', openModal);
-    if (btnCloseLogin) btnCloseLogin.addEventListener('click', closeModal);
-
-    // Fechar ao clicar fora da caixa branca
-    modalOverlay.addEventListener('click', (event) => {
-        if (event.target === modalOverlay) {
-            closeModal();
-        }
-    });
-
-    // Fechar com a tecla ESC
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && !modalOverlay.classList.contains('is-hidden')) {
-            closeModal();
-        }
-    });
-
-    // 2. Transição: Login <-> Esqueci Senha (substituição total)
-    if (btnShowForgot) {
-        btnShowForgot.addEventListener('click', () => {
-            loginView.classList.add('is-hidden');
-            forgotPasswordView.classList.remove('is-hidden');
-        });
-    }
-
-    if (btnBackLogin) {
-        btnBackLogin.addEventListener('click', () => {
-            forgotPasswordView.classList.add('is-hidden');
-            loginView.classList.remove('is-hidden');
-        });
-    }
-
-    // 3. Mostrar/Esconder Senha
-    if (togglePwdBtn && pwdInput) {
-        togglePwdBtn.addEventListener('click', () => {
-            const isPassword = pwdInput.type === 'password';
-            pwdInput.type = isPassword ? 'text' : 'password';
-            togglePwdIcon.textContent = isPassword ? 'visibility' : 'visibility_off';
-        });
-    }
-
-    // 4. Submissão dos Formulários (Mockup)
-    if (formLogin) {
-        formLogin.addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Simulação: Usuário autenticado com sucesso!');
-            closeModal();
-        });
-    }
-
-    if (formForgot) {
-        formForgot.addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Se o e-mail existir, você receberá as instruções em breve!');
-            closeModal();
-        });
-    }
-}
-
-/* ==========================================================================
-   Lógica do Contador do Carrinho (Badge)
-   ========================================================================== */
-function updateCartBadge() {
-    const badge = document.getElementById('cart-badge');
-    if (!badge) return;
-
-    // A lógica real vai ler os dados que o seu site salvar no navegador (localStorage).
-    // Supondo que você salve uma lista na chave 'alexandria_cart':
-    let cartCount = 0;
-    try {
-        const cartData = JSON.parse(localStorage.getItem('alexandria_cart')) || [];
-        // Soma a quantidade de cada item na lista (se houver a propriedade 'qty', senão apenas conta os itens)
-        cartCount = cartData.reduce((total, item) => total + (item.qty || 1), 0);
-    } catch (error) {
-        console.error('Erro ao ler o carrinho:', error);
-    }
-
-    // SIMULAÇÃO: Descomente a linha abaixo para forçar o número e ver como fica o design!
-    // cartCount = 3;
-
-    // Atualiza a interface
-    if (cartCount > 0) {
-        badge.textContent = cartCount > 99 ? '99+' : cartCount;
-        badge.hidden = false;
-    } else {
-        badge.hidden = true;
-    }
-}
-
-// Atualiza o contador imediatamente ao carregar a página
-updateCartBadge();
-
-// Se o usuário abrir duas abas do site e adicionar algo em uma, a outra aba atualiza na hora
+// Outra aba alterou o carrinho
 window.addEventListener('storage', (event) => {
-    if (event.key === 'alexandria_cart') {
-        updateCartBadge();
-    }
+    if (event.key === CART_STORAGE_KEY) updateCartBadge();
 });

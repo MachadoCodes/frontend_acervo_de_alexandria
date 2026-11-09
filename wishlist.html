@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sua lista de desejos no Acervo de Alexandria.">
+    <meta name="theme-color" content="#071E3A">
+    <title>Lista de Desejos — Acervo de Alexandria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=account_circle,barcode,chevron_left,chevron_right,close,delete,favorite,lock,menu,pause,pix,play_arrow,qr_code_2,search,sell,shopping_cart,verified_user,visibility,visibility_off&display=block">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/index.js" type="module" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Pular para o conteúdo</a>
+
+<header class="main-header" id="top" tabindex="-1">
+    <div class="header-bar">
+        <a class="logo-container" href="index.html">
+            <img src="assets/img/aaLOGO.png" alt="Acervo de Alexandria — página inicial" class="logo-img" width="180"
+                 height="90">
+        </a>
+        <form class="search-bar" role="search" action="resultado-busca.html" method="get">
+            <label class="visually-hidden" for="searchInput">Buscar livros no acervo</label>
+            <input type="search" id="searchInput" name="q" class="search-input" placeholder="O que está procurando…"
+                   autocomplete="off" enterkeyhint="search">
+            <button type="submit" class="search-btn" aria-label="Buscar">
+                <span class="material-symbols-outlined" aria-hidden="true">search</span>
+            </button>
+        </form>
+        <nav class="user-menu" aria-label="Menu de usuário">
+            <a href="wishlist.html" class="menu-item icon-link" aria-label="Lista de desejos">
+                <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+            </a>
+            <div class="account-menu-container">
+                <button type="button" id="btn-icon-login" class="menu-item icon-link btn-header-login"
+                        aria-label="Entrar na minha conta">
+                    <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
+                </button>
+                <div class="account-dropdown">
+                    <button type="button" id="btn-open-login" class="dropdown-item">Entrar na minha conta</button>
+                    <a href="cadastro.html" class="dropdown-item">Criar uma conta</a>
+                </div>
+            </div>
+            <a href="carrinho.html" class="menu-item icon-link" aria-label="Carrinho">
+                <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
+                <span class="cart-badge" id="cart-badge" hidden>0</span>
+            </a>
+        </nav>
+    </div>
+
+    <nav class="category-nav" aria-label="Categorias">
+        <ul class="category-list">
+            <li class="category-item">
+                <button type="button" class="menu-trigger" aria-expanded="false" aria-controls="category-menu">
+                    <span class="material-symbols-outlined" aria-hidden="true">menu</span> Categorias
+                </button>
+            </li>
+            <li class="category-item"><a href="/infantil">Infantil</a></li>
+            <li class="category-item"><a href="/juvenil">Juvenil</a></li>
+            <li class="category-item"><a href="/ficcao">Ficção</a></li>
+            <li class="category-item"><a href="/romance">Romance</a></li>
+        </ul>
+    </nav>
+
+    <div class="category-menu" id="category-menu" hidden>
+        <ul class="category-menu-list">
+            <li><a href="/categoria/fantasia">Fantasia</a></li>
+            <li><a href="/categoria/ficcao-cientifica">Ficção científica</a></li>
+            <li><a href="/categoria/romance">Romance</a></li>
+            <li><a href="/categoria/misterio">Mistério e suspense</a></li>
+            <li><a href="/categoria/terror">Terror</a></li>
+            <li><a href="/categoria/ficcao-historica">Ficção histórica</a></li>
+            <li><a href="/categoria/acao">Ação e aventura</a></li>
+            <li><a href="/categoria/biografias">Biografias e memórias</a></li>
+            <li><a href="/categoria/autoajuda">Autoajuda</a></li>
+            <li><a href="/categoria/historia">História</a></li>
+            <li><a href="/categoria/ciencia">Ciência e tecnologia</a></li>
+            <li><a href="/categoria/negocios">Negócios e economia</a></li>
+            <li><a href="/categoria/filosofia">Filosofia e sociologia</a></li>
+            <li><a href="/categoria/religiao">Religião e espiritualidade</a></li>
+            <li><a href="/categoria/saude">Saúde</a></li>
+            <li><a href="/categoria/culinaria">Culinária</a></li>
+            <li><a href="/categoria/poesia">Poesia</a></li>
+            <li><a href="/categoria/hqs">HQs e Mangás</a></li>
+            <li><a href="/categoria/infantis">Livros infantis</a></li>
+            <li><a href="/categoria/infantojuvenil">Infantojuvenil</a></li>
+            <li><a href="/categoria/didaticos">Obras didáticas</a></li>
+        </ul>
+    </div>
+</header>
+
+<main class="main-content wishlist-layout" id="main" tabindex="-1">
+    <div class="wishlist-header">
+        <h1 class="wishlist-title">Lista de Desejos</h1>
+
+        <div class="wishlist-controls">
+            <label for="sort-wishlist">Ordenar por:</label>
+            <select id="sort-wishlist" class="form-input sort-select">
+                <option value="date-desc">Data adicionada (mais recentes)</option>
+                <option value="date-asc">Data adicionada (mais antigos)</option>
+                <option value="alpha-asc">Ordem alfabética (A-Z)</option>
+                <option value="alpha-desc">Ordem alfabética (Z-A)</option>
+                <option value="price-asc">Preço (menor para maior)</option>
+                <option value="price-desc">Preço (maior para menor)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="results-grid">
+        <!-- Repita este <article> para cada livro -->
+        <article class="book-card wishlist-card">
+            <img src="assets/img/placeholder-capa.svg" alt="" class="book-cover" width="200" height="200" loading="lazy"
+                 decoding="async">
+            <h2 class="book-title">
+                <a class="book-link" href="produto.html">Lorem ipsum dolor sit amet</a>
+            </h2>
+            <p class="book-price">
+                <data value="59.90">R$ 59,90</data>
+            </p>
+
+            <div class="wishlist-actions">
+                <button type="button" class="btn-primary btn-wishlist-cart">Comprar</button>
+                <button type="button" class="btn-remove-icon"
+                        aria-label="Remover Lorem ipsum dolor sit amet da lista de desejos">
+                    <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+                </button>
+            </div>
+        </article>
+
+        <!-- Item 2 -->
+        <article class="book-card wishlist-card">
+            <img src="assets/img/placeholder-capa.svg" alt="" class="book-cover" width="200" height="200" loading="lazy"
+                 decoding="async">
+            <h2 class="book-title">
+                <a class="book-link" href="produto.html">Senhor dos Anéis</a>
+            </h2>
+            <p class="book-price">
+                <data value="89.90">R$ 89,90</data>
+            </p>
+
+            <div class="wishlist-actions">
+                <button type="button" class="btn-primary btn-wishlist-cart">Comprar</button>
+                <button type="button" class="btn-remove-icon" aria-label="Remover Senhor dos Anéis da lista de desejos">
+                    <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+                </button>
+            </div>
+        </article>
+    </div>
+</main>
+
+<footer class="main-footer">
+    <button type="button" id="backToTopBtn" class="back-to-top-bar">Voltar ao Topo</button>
+    <div class="footer-links-container">
+        <nav class="footer-nav" aria-label="Links de rodapé">
+            <a href="/sobre" class="footer-link">Sobre</a>
+            <a href="/contato" class="footer-link">Contato</a>
+            <a href="/ajuda" class="footer-link">Ajuda</a>
+            <a href="/social" class="footer-link">Social</a>
+        </nav>
+    </div>
+    <div class="footer-copyright">
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Acervo de Alexandria. Todos os direitos reservados.</p>
+
+            <div class="footer-payment-methods" role="group" aria-label="Métodos de pagamento aceitos">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/Visa_Inc._logo_%282014–2021%29.svg"
+                     alt="Visa" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg" alt="Mastercard"
+                     class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg"
+                     alt="Amex" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Pay_Logo_%282020%29.svg"
+                     alt="Google Pay" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" alt="Apple Pay"
+                     class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal"
+                     class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Pix_%28Brazil%29_logo.svg" alt="Pix"
+                     class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" alt="Bitcoin"
+                     class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/Ethereum_logo_translucent.svg"
+                     alt="Ethereum" class="footer-pay-img">
+                <span class="material-symbols-outlined footer-pay-icon" role="img" aria-label="Boleto">barcode</span>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
