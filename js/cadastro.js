@@ -9,8 +9,29 @@ function initRegisterForm() {
 
     if (!form || !btnSubmit) return;
 
+    /* --- 0. Senhas: mínimo de 8 caracteres e confirmação igual --- */
+    const password = document.getElementById('reg-password');
+    const passwordConfirm = document.getElementById('reg-password-confirm');
+
+    function checkPasswords() {
+        if (!password || !passwordConfirm) return;
+        password.setCustomValidity(
+            password.value && password.value.length < 8 ? 'A senha precisa ter no mínimo 8 caracteres.' : ''
+        );
+        const mismatch = passwordConfirm.value !== '' && passwordConfirm.value !== password.value;
+        passwordConfirm.setCustomValidity(mismatch ? 'As senhas não coincidem.' : '');
+
+        // Aviso visível: sem ele o botão "Criar Conta" ficaria desativado sem explicação
+        const hint = document.getElementById('password-confirm-hint');
+        if (hint) {
+            hint.textContent = mismatch ? 'As senhas não coincidem.' : '';
+            hint.classList.toggle('is-error', mismatch);
+        }
+    }
+
     /* --- 1. Lógica de Validação em Tempo Real --- */
     function checkFormValidity() {
+        checkPasswords();
         // .checkValidity() verifica automaticamente todos os campos que possuem 'required'
         const isFormValid = form.checkValidity();
         const areTermsAccepted = termsCheckbox.checked;
@@ -22,6 +43,19 @@ function initRegisterForm() {
     // Escuta qualquer digitação ou clique dentro do formulário
     form.addEventListener('input', checkFormValidity);
     form.addEventListener('change', checkFormValidity);
+
+    // MOCK: sem back-end, segue para a página de sucesso. Em produção, remova o preventDefault
+    // para o POST seguir ao servidor (a senha nunca deve ir na URL: por isso o form é POST).
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        checkFormValidity();
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        btnSubmit.disabled = true;
+        window.location.href = 'sucesso-cadastro.html';
+    });
 
     /* --- 2. Lógica Dinâmica: CPF vs Passaporte --- */
     if (countrySelect && docLabel && docInput) {

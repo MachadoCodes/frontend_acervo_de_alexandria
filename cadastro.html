@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Finalize seu pedido no Acervo de Alexandria.">
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Crie sua conta no Acervo de Alexandria.">
     <meta name="theme-color" content="#071E3A">
     <title>Cadastro — Acervo de Alexandria</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Só os ícones usados (ordem alfabética obrigatória) -->
+    <!-- Mesma URL em TODAS as páginas: o navegador baixa a fonte uma vez e reaproveita o cache (ordem alfabética obrigatória) -->
     <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=account_circle,barcode,close,favorite,lock,menu,pix,qr_code_2,search,sell,shopping_cart,verified_user,visibility,visibility_off&display=block">
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=account_circle,barcode,check_circle,chevron_left,chevron_right,close,delete,favorite,lock,menu,pause,pix,play_arrow,qr_code_2,search,sell,shopping_cart,verified_user,visibility,visibility_off&display=block">
     <link rel="stylesheet" href="css/style.css">
     <script src="js/index.js" type="module"></script>
     <script src="js/cadastro.js" type="module"></script>
@@ -22,13 +21,11 @@
 <header class="main-header" id="top" tabindex="-1">
     <div class="header-bar">
         <a class="logo-container" href="index.html">
-            <img src="assets/img/aaLOGO.png" alt="Acervo de Alexandria — página inicial" class="logo-img" width="180"
-                 height="90">
+            <img src="assets/img/aaLOGO.png" alt="Acervo de Alexandria — página inicial" class="logo-img" width="180" height="90">
         </a>
         <form class="search-bar" role="search" action="resultado-busca.html" method="get">
             <label class="visually-hidden" for="searchInput">Buscar livros no acervo</label>
-            <input type="search" id="searchInput" name="q" class="search-input" placeholder="O que está procurando…"
-                   autocomplete="off" enterkeyhint="search">
+            <input type="search" id="searchInput" name="q" class="search-input" placeholder="O que está procurando…" autocomplete="off" enterkeyhint="search">
             <button type="submit" class="search-btn" aria-label="Buscar">
                 <span class="material-symbols-outlined" aria-hidden="true">search</span>
             </button>
@@ -38,8 +35,7 @@
                 <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
             </a>
             <div class="account-menu-container">
-                <button type="button" id="btn-icon-login" class="menu-item icon-link btn-header-login"
-                        aria-label="Entrar na minha conta">
+                <button type="button" id="btn-icon-login" class="menu-item icon-link btn-header-login" aria-label="Entrar na minha conta">
                     <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
                 </button>
                 <div class="account-dropdown">
@@ -53,6 +49,7 @@
             </a>
         </nav>
     </div>
+
     <nav class="category-nav" aria-label="Categorias">
         <ul class="category-list">
             <li class="category-item">
@@ -60,35 +57,37 @@
                     <span class="material-symbols-outlined" aria-hidden="true">menu</span> Categorias
                 </button>
             </li>
-            <li class="category-item"><a href="/infantil">Infantil</a></li>
-            <li class="category-item"><a href="/juvenil">Juvenil</a></li>
-            <li class="category-item"><a href="/ficcao">Ficção</a></li>
-            <li class="category-item"><a href="/romance">Romance</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=infantis">Infantil</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=infantojuvenil">Juvenil</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=ficcao">Ficção</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=romance">Romance</a></li>
         </ul>
     </nav>
+
+    <!-- Painel FORA do <nav>, com [hidden]: mesmo padrão das demais páginas -->
     <div class="category-menu" id="category-menu" hidden>
         <ul class="category-menu-list">
-            <li><a href="/categoria/fantasia">Fantasia</a></li>
-            <li><a href="/categoria/ficcao-cientifica">Ficção científica</a></li>
-            <li><a href="/categoria/romance">Romance</a></li>
-            <li><a href="/categoria/misterio">Mistério e suspense</a></li>
-            <li><a href="/categoria/terror">Terror</a></li>
-            <li><a href="/categoria/ficcao-historica">Ficção histórica</a></li>
-            <li><a href="/categoria/acao">Ação e aventura</a></li>
-            <li><a href="/categoria/biografias">Biografias e memórias</a></li>
-            <li><a href="/categoria/autoajuda">Autoajuda</a></li>
-            <li><a href="/categoria/historia">História</a></li>
-            <li><a href="/categoria/ciencia">Ciência e tecnologia</a></li>
-            <li><a href="/categoria/negocios">Negócios e economia</a></li>
-            <li><a href="/categoria/filosofia">Filosofia e sociologia</a></li>
-            <li><a href="/categoria/religiao">Religião e espiritualidade</a></li>
-            <li><a href="/categoria/saude">Saúde</a></li>
-            <li><a href="/categoria/culinaria">Culinária</a></li>
-            <li><a href="/categoria/poesia">Poesia</a></li>
-            <li><a href="/categoria/hqs">HQs e Mangás</a></li>
-            <li><a href="/categoria/infantis">Livros infantis</a></li>
-            <li><a href="/categoria/infantojuvenil">Infantojuvenil</a></li>
-            <li><a href="/categoria/didaticos">Obras didáticas</a></li>
+            <li><a href="resultado-busca.html?categoria=fantasia">Fantasia</a></li>
+            <li><a href="resultado-busca.html?categoria=ficcao-cientifica">Ficção científica</a></li>
+            <li><a href="resultado-busca.html?categoria=romance">Romance</a></li>
+            <li><a href="resultado-busca.html?categoria=misterio">Mistério e suspense</a></li>
+            <li><a href="resultado-busca.html?categoria=terror">Terror</a></li>
+            <li><a href="resultado-busca.html?categoria=ficcao-historica">Ficção histórica</a></li>
+            <li><a href="resultado-busca.html?categoria=acao">Ação e aventura</a></li>
+            <li><a href="resultado-busca.html?categoria=biografias">Biografias e memórias</a></li>
+            <li><a href="resultado-busca.html?categoria=autoajuda">Autoajuda</a></li>
+            <li><a href="resultado-busca.html?categoria=historia">História</a></li>
+            <li><a href="resultado-busca.html?categoria=ciencia">Ciência e tecnologia</a></li>
+            <li><a href="resultado-busca.html?categoria=negocios">Negócios e economia</a></li>
+            <li><a href="resultado-busca.html?categoria=filosofia">Filosofia e sociologia</a></li>
+            <li><a href="resultado-busca.html?categoria=religiao">Religião e espiritualidade</a></li>
+            <li><a href="resultado-busca.html?categoria=saude">Saúde</a></li>
+            <li><a href="resultado-busca.html?categoria=culinaria">Culinária</a></li>
+            <li><a href="resultado-busca.html?categoria=poesia">Poesia</a></li>
+            <li><a href="resultado-busca.html?categoria=hqs">HQs e Mangás</a></li>
+            <li><a href="resultado-busca.html?categoria=infantis">Livros infantis</a></li>
+            <li><a href="resultado-busca.html?categoria=infantojuvenil">Infantojuvenil</a></li>
+            <li><a href="resultado-busca.html?categoria=didaticos">Obras didáticas</a></li>
         </ul>
     </div>
 </header>
@@ -109,7 +108,7 @@
 
                 <div class="form-group">
                     <label for="reg-name">Nome completo <span class="required">*</span></label>
-                    <input type="text" id="reg-name" class="form-input" required autocomplete="name">
+                    <input type="text" id="reg-name" name="name" class="form-input" required autocomplete="name">
                 </div>
 
                 <!-- Nova linha agrupando País e Celular -->
@@ -117,7 +116,7 @@
                     <!-- País -->
                     <div class="form-group">
                         <label for="reg-country">País <span class="required">*</span></label>
-                        <select id="reg-country" class="form-input" required autocomplete="country">
+                        <select id="reg-country" name="country" class="form-input" required autocomplete="country">
                             <option value="" disabled selected>Selecione seu país...</option>
                             <option value="AF">Afeganistão</option>
                             <option value="ZA">África do Sul</option>
@@ -376,7 +375,7 @@
                     <div class="form-group">
                         <label for="reg-phone">Celular</label>
                         <div class="phone-group">
-                            <select id="reg-phone-code" class="form-input phone-code">
+                            <select id="reg-phone-code" name="phoneCode" class="form-input phone-code">
                                 <option value="" disabled selected>DDI</option>
                                 <option value="+93">+93 (Afeganistão)</option>
                                 <option value="+27">+27 (África do Sul)</option>
@@ -558,7 +557,7 @@
                                 <option value="+260">+260 (Zâmbia)</option>
                                 <option value="+263">+263 (Zimbábue)</option>
                             </select>
-                            <input type="tel" id="reg-phone" class="form-input phone-number"
+                            <input type="tel" id="reg-phone" name="phone" class="form-input phone-number"
                                    placeholder="(00) 00000-0000" autocomplete="tel-national">
                         </div>
                     </div>
@@ -568,38 +567,38 @@
                 <div class="form-row address-row-3">
                     <div class="form-group">
                         <label for="reg-zip">Código Postal <span class="required">*</span></label>
-                        <input type="text" id="reg-zip" class="form-input" required autocomplete="postal-code">
+                        <input type="text" id="reg-zip" name="zip" class="form-input" required autocomplete="postal-code">
                     </div>
                     <div class="form-group">
                         <label for="reg-state">Estado / Província <span class="required">*</span></label>
-                        <input type="text" id="reg-state" class="form-input" required autocomplete="address-level1">
+                        <input type="text" id="reg-state" name="state" class="form-input" required autocomplete="address-level1">
                     </div>
                     <div class="form-group">
                         <label for="reg-city">Cidade <span class="required">*</span></label>
-                        <input type="text" id="reg-city" class="form-input" required autocomplete="address-level2">
+                        <input type="text" id="reg-city" name="city" class="form-input" required autocomplete="address-level2">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="reg-address">Endereço <span class="required">*</span></label>
-                    <input type="text" id="reg-address" class="form-input" required autocomplete="address-line1">
+                    <input type="text" id="reg-address" name="address" class="form-input" required autocomplete="address-line1">
                 </div>
 
                 <div class="form-row address-row-2">
                     <div class="form-group">
                         <label for="reg-num">Número <span class="required">*</span></label>
-                        <input type="text" id="reg-num" class="form-input" required>
+                        <input type="text" id="reg-num" name="number" class="form-input" required>
                     </div>
                     <div class="form-group">
                         <label for="reg-comp">Complemento</label>
-                        <input type="text" id="reg-comp" class="form-input">
+                        <input type="text" id="reg-comp" name="complement" class="form-input">
                     </div>
                 </div>
 
                 <!-- Documento dinâmico -->
                 <div class="form-group half-width" id="doc-group">
                     <label for="reg-doc" id="label-doc">CPF <span class="required">*</span></label>
-                    <input type="text" id="reg-doc" class="form-input" placeholder="000.000.000-00" required>
+                    <input type="text" id="reg-doc" name="document" class="form-input" placeholder="000.000.000-00" required>
                 </div>
             </fieldset>
 
@@ -609,7 +608,7 @@
 
                 <div class="form-group">
                     <label for="reg-email">E-mail <span class="required">*</span></label>
-                    <input type="email" id="reg-email" class="form-input" placeholder="Insira seu email" required
+                    <input type="email" id="reg-email" name="email" class="form-input" placeholder="Insira seu email" required
                            autocomplete="email">
                 </div>
 
@@ -617,7 +616,7 @@
                     <div class="form-group">
                         <label for="reg-password">Senha <span class="required">*</span></label>
                         <div class="password-wrapper">
-                            <input type="password" id="reg-password" class="form-input" required
+                            <input type="password" id="reg-password" name="password" class="form-input" required minlength="8"
                                    autocomplete="new-password">
                             <button type="button" class="btn-toggle-password" aria-label="Mostrar senha">
                                 <span class="material-symbols-outlined">visibility_off</span>
@@ -628,12 +627,13 @@
                     <div class="form-group">
                         <label for="reg-password-confirm">Confirmar senha <span class="required">*</span></label>
                         <div class="password-wrapper">
-                            <input type="password" id="reg-password-confirm" class="form-input" required
+                            <input type="password" id="reg-password-confirm" name="passwordConfirm" class="form-input" required
                                    autocomplete="new-password">
                             <button type="button" class="btn-toggle-password" aria-label="Mostrar senha">
                                 <span class="material-symbols-outlined">visibility_off</span>
                             </button>
                         </div>
+                        <span class="password-hint" id="password-confirm-hint" role="status"></span>
                     </div>
                 </div>
             </fieldset>
@@ -641,15 +641,15 @@
             <!-- Finalização e Termos -->
             <div class="register-actions">
                 <label class="checkbox-label">
-                    <input type="checkbox" id="reg-terms" required>
+                    <input type="checkbox" id="reg-terms" name="termsAccepted" required>
                     <span class="terms-text">
                         Declaro que li e concordo com os
-                        <a href="/termos" class="link-inline" target="_blank">Termos de Uso</a> e a
-                        <a href="/privacidade" class="link-inline" target="_blank">Política de Privacidade</a>.
+                        <a href="termos.html" class="link-inline" target="_blank" rel="noopener">Termos de Uso</a> e a
+                        <a href="privacidade.html" class="link-inline" target="_blank" rel="noopener">Política de Privacidade</a>.
                     </span>
                 </label>
                 <label class="checkbox-label">
-                    <input type="checkbox" id="reg-newsletter">
+                    <input type="checkbox" id="reg-newsletter" name="newsletter">
                     <span class="terms-text">Desejo receber novidades e promoções literárias por e-mail.</span>
                 </label>
 
@@ -676,106 +676,23 @@
         <div class="footer-bottom-bar">
             <p>&copy; 2026 Acervo de Alexandria. Todos os direitos reservados.</p>
 
-            <!-- Logos de pagamento -->
-            <div class="footer-payment-methods" aria-label="Métodos de pagamento aceitos">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/Visa_Inc._logo_%282014–2021%29.svg"
-                     alt="Visa" class="footer-pay-img">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg" alt="Mastercard"
-                     class="footer-pay-img">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg"
-                     alt="Amex" class="footer-pay-img">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Pay_Logo_%282020%29.svg"
-                     alt="Google Pay" class="footer-pay-img">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" alt="Apple Pay"
-                     class="footer-pay-img">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal"
-                     class="footer-pay-img">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Pix_%28Brazil%29_logo.svg" alt="Pix"
-                     class="footer-pay-img">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" alt="Bitcoin"
-                     class="footer-pay-img">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/Ethereum_logo_translucent.svg"
-                     alt="Ethereum" class="footer-pay-img">
-                <span class="material-symbols-outlined footer-pay-icon" aria-hidden="true">barcode</span>
+            <!-- Selos em texto (sem dependência de imagens). Para usar as logos oficiais, baixe-as das páginas de marca de cada empresa para assets/img/payment/ e troque cada <span> por <img class="footer-pay-img"> -->
+            <div class="footer-payment-methods" role="group" aria-label="Métodos de pagamento aceitos">
+                <span class="footer-pay-badge">Visa</span>
+                <span class="footer-pay-badge">Mastercard</span>
+                <span class="footer-pay-badge">Amex</span>
+                <span class="footer-pay-badge">Google Pay</span>
+                <span class="footer-pay-badge">Apple Pay</span>
+                <span class="footer-pay-badge">PayPal</span>
+                <span class="footer-pay-badge">Pix</span>
+                <span class="footer-pay-badge">Bitcoin</span>
+                <span class="footer-pay-badge">Ethereum</span>
+                <span class="material-symbols-outlined footer-pay-icon" role="img" aria-label="Boleto">barcode</span>
             </div>
         </div>
     </div>
 </footer>
-<!-- Modal Global de Login / Recuperação -->
-<div class="modal-overlay is-hidden" id="login-modal" aria-modal="true" role="dialog">
-    <div class="modal-box">
-        <button class="btn-close-modal" id="btn-close-login" aria-label="Fechar modal">
-            <span class="material-symbols-outlined">close</span>
-        </button>
 
-        <!-- Visão 1: Login -->
-        <div id="login-view">
-            <h2 class="modal-title">Entrar</h2>
-            <form id="form-login" class="modal-form">
-                <div class="form-group">
-                    <label for="login-email">E-mail</label>
-                    <input type="email" id="login-email" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label for="login-password">Senha</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="login-password" class="form-input" required>
-                        <button type="button" class="btn-toggle-password" id="toggle-password-btn"
-                                aria-label="Mostrar senha">
-                            <span class="material-symbols-outlined" id="toggle-password-icon">visibility_off</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="login-options-row">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="remember-me">
-                        <span class="terms-text">Lembrar de mim</span>
-                    </label>
-                    <button type="button" class="link-inline btn-forgot-password" id="btn-show-forgot">Esqueci minha
-                        senha
-                    </button>
-                </div>
-                <div class="modal-actions">
-                    <button type="submit" class="btn-primary btn-login-submit">ENTRAR</button>
-                </div>
-                <div class="modal-footer-text">
-                    Ainda não possui uma conta? <a href="cadastro.html" class="link-inline">Crie uma</a>
-                </div>
-            </form>
-        </div>
-
-        <!-- Visão 2: Esqueci a Senha -->
-        <div id="forgot-password-view" class="is-hidden">
-            <button type="button" class="btn-back-login" id="btn-back-login" aria-label="Voltar para o login">&lt;
-                voltar
-            </button>
-
-            <h2 class="modal-title">Recuperar Senha</h2>
-            <p class="modal-desc">Enviaremos as instruções de recuperação para o seu e-mail, caso ele exista em nossos
-                registros.</p>
-
-            <form id="form-forgot" class="modal-form">
-                <div class="form-group">
-                    <label for="recovery-email">E-mail</label>
-                    <input type="email" id="recovery-email" class="form-input" required>
-                </div>
-
-                <!-- Mockup de Captcha -->
-                <div class="mock-captcha">
-                    <label class="checkbox-label">
-                        <input type="checkbox" required>
-                        <span class="terms-text">Não sou um robô</span>
-                    </label>
-                    <span class="material-symbols-outlined captcha-logo">verified_user</span>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="submit" class="btn-primary btn-login-submit">RESETAR</button>
-                </div>
-            </form>
-        </div>
-
-    </div>
-</div>
+<!-- O modal de login é criado por js/index.js (um único <dialog> para todas as páginas) -->
 </body>
 </html>
