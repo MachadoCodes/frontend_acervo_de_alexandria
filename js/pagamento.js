@@ -1,4 +1,5 @@
 // js/pagamento.js — carregado com <script type="module"> (deferido, modo estrito, sem globais)
+import {readCart, cartSubtotalCents, clearCart, readDelivery, saveOrder, SHIPPING_CENTS} from './store.js';
 
 const currency = new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'});
 const formatCents = (cents) => currency.format(cents / 100);
@@ -63,6 +64,67 @@ function isFutureExpiry(value) {
 /* ==========================================================================
    Página de pagamento e Motor de Cálculo
    ========================================================================== */
+/* ==========================================================================
+   Carrega carrinho e entrega (guardados nas etapas anteriores)
+   ========================================================================== */
+const cartItems = readCart();
+const delivery = readDelivery();
+
+// Sem itens ou sem dados de entrega o pedido não pode ser pago: volta para a etapa que falta
+if (cartItems.length === 0) {
+    window.location.replace('carrinho.html');
+} else if (!delivery) {
+    window.location.replace('entrega.html');
+}
+
+function hydrateSummary() {
+    if (!delivery || cartItems.length === 0) return;
+    const subtotal = cartSubtotalCents(cartItems);
+    const shipping = SHIPPING_CENTS[delivery.method] ?? SHIPPING_CENTS.standard;
+
+    const summary = document.getElementById('order-summary');
+    summary.dataset.subtotalCents = String(subtotal);
+    summary.dataset.shippingCents = String(shipping);
+    document.getElementById('summary-subtotal').textContent = formatCents(subtotal);
+    document.getElementById('summary-shipping').textContent = formatCents(shipping);
+    document.getElementById('final-total').textContent = formatCents(subtotal + shipping);
+
+    // Bloco "Dados de entrega" (textContent: nada do que foi digitado vira HTML)
+    const box = document.getElementById('delivery-summary');
+    const lines = [];
+    if (delivery.member) {
+        lines.push(['strong', 'Endereço cadastrado na sua conta']);
+    } else {
+        lines.push(['strong', `${delivery.nome ?? ''} ${delivery.sobrenome ?? ''}`.trim()]);
+        const street = [delivery.endereco, delivery.numero].filter(Boolean).join(', ');
+        lines.push([null, delivery.complemento ? `${street}, ${delivery.complemento}` : street]);
+        lines.push([null, [delivery.cidade, delivery.estado].filter(Boolean).join(' - ')]);
+        lines.push([null, delivery.cep ?? '']);
+    }
+    const nodes = lines.filter(([, text]) => text).map(([tag, text]) => {
+        const p = document.createElement('p');
+        if (tag) {
+            const strong = document.createElement(tag);
+            strong.textContent = text;
+            p.append(strong);
+        } else {
+            p.textContent = text;
+        }
+        return p;
+    });
+    const method = document.createElement('p');
+    const label = document.createElement('strong');
+    label.textContent = 'Método: ';
+    method.append(label, delivery.method === 'express'
+        ? 'Entrega Expressa (1 a 2 dias úteis)'
+        : 'Entrega Padrão (5 a 7 dias úteis)');
+    const divider = document.createElement('hr');
+    divider.className = 'summary-divider';
+    box.replaceChildren(...nodes, divider, method);
+}
+
+hydrateSummary();
+
 function initPayment() {
     const form = document.getElementById('payment-form');
     const submitButton = document.getElementById('btn-submit-order');
@@ -216,10 +278,26 @@ function initPayment() {
     });
 
     /* --- Evita clique duplo --- */
-    form.addEventListener('submit', () => {
+    form.addEventListener('submit', (event) => {
+        // MOCK: sem back-end, o pedido é "concluído" aqui. Em produção, remova o preventDefault
+        // para o POST seguir ao servidor (com token CSRF e gateway de pagamento).
+        event.preventDefault();
         submitButton.disabled = true;
         submitButton.setAttribute('aria-busy', 'true');
         submitButton.textContent = 'PROCESSANDO…';
+
+        const method = form.querySelector('input[name="payment_type"]:checked')?.value;
+        const randomPart = crypto.getRandomValues(new Uint32Array(1))[0] % 1000000;
+        const order = {
+            id: `AA-${String(randomPart).padStart(6, '0')}`,
+            method: METHOD_LABELS[method] ?? '',
+            total: finalTotal.textContent,
+        };
+        setTimeout(() => {
+            saveOrder(order);
+            clearCart();
+            window.location.href = 'sucesso.html';
+        }, 900);
     });
 
     // Restaura o estado ao voltar pelo botão "voltar" do navegador (bfcache)
@@ -254,16 +332,16 @@ function initPromo() {
     // Lógica para abrir/fechar a caixa do cupom
     if (promoToggleBtn && promoContent) {
         promoToggleBtn.addEventListener('click', () => {
-            const isHidden = promoContent.classList.toggle('is-hidden');
-            promoToggleBtn.setAttribute('aria-expanded', String(!isHidden));
-            if (!isHidden) promoInput.focus();
+            promoContent.hidden = !promoContent.hidden;
+            promoToggleBtn.setAttribute('aria-expanded', String(!promoContent.hidden));
+            if (!promoContent.hidden) promoInput.focus();
         });
     }
 
     promoForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         promoMessage.textContent = '';
-        promoMessage.style.color = '';
+        promoMessage.classList.remove('is-error', 'is-success');
 
         // Se tem cupom aplicado, o botão atua como "REMOVER"
         if (appliedCouponCode) {
@@ -301,8 +379,8 @@ function initPromo() {
 
     function showPromoMessage(msg, type) {
         promoMessage.textContent = msg;
-        promoMessage.style.color = type === 'error' ? '#c62828' : '#2e7d32';
-        promoMessage.style.display = 'block';
+        promoMessage.classList.toggle('is-error', type === 'error');
+        promoMessage.classList.toggle('is-success', type === 'success');
     }
 
     function applyCoupon(code, couponData) {
@@ -311,8 +389,7 @@ function initPromo() {
 
         // Altera o layout do botão para estado de "Remover"
         submitBtn.textContent = 'REMOVER';
-        submitBtn.style.backgroundColor = '#c62828'; // Vermelho
-        submitBtn.style.color = '#ffffff';
+        submitBtn.classList.add('btn-danger'); // Vermelho (definido no CSS)
         submitBtn.disabled = false;
         appliedCouponCode = code;
 
@@ -332,8 +409,7 @@ function initPromo() {
 
         // Retorna o botão ao estado padrão original
         submitBtn.textContent = 'APLICAR';
-        submitBtn.style.backgroundColor = '';
-        submitBtn.style.color = '';
+        submitBtn.classList.remove('btn-danger');
 
         promoMessage.textContent = '';
         appliedCouponCode = null;
@@ -351,5 +427,7 @@ function initPromo() {
 }
 
 // Inicializa as funções quando o script é carregado
-initPayment();
-initPromo();
+if (cartItems.length > 0 && delivery) {
+    initPayment();
+    initPromo();
+}
