@@ -2880,8 +2880,3 @@ button.forgot-password {
     font-weight: 700;
     white-space: nowrap;
 }
-
-/* TEMPORÁRIO: remover em feature/pagina-pagamento (usado pelo modal e cupom antigos) */
-.is-hidden {
-    display: none !important;
-}
