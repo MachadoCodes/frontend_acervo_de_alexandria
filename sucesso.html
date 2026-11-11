@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Seu pedido foi confirmado.">
+    <meta name="theme-color" content="#071E3A">
+    <title>Pedido confirmado — Acervo de Alexandria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Mesma URL em TODAS as páginas: o navegador baixa a fonte uma vez e reaproveita o cache (ordem alfabética obrigatória) -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=account_circle,barcode,check_circle,chevron_left,chevron_right,close,delete,favorite,lock,menu,pause,pix,play_arrow,qr_code_2,search,sell,shopping_cart,verified_user,visibility,visibility_off&display=block">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/index.js" type="module"></script>
+    <script src="js/sucesso.js" type="module"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Pular para o conteúdo</a>
+
+<header class="main-header" id="top" tabindex="-1">
+    <div class="header-bar">
+        <a class="logo-container" href="index.html">
+            <img src="assets/img/aaLOGO.png" alt="Acervo de Alexandria — página inicial" class="logo-img" width="180" height="90">
+        </a>
+        <form class="search-bar" role="search" action="resultado-busca.html" method="get">
+            <label class="visually-hidden" for="searchInput">Buscar livros no acervo</label>
+            <input type="search" id="searchInput" name="q" class="search-input" placeholder="O que está procurando…" autocomplete="off" enterkeyhint="search">
+            <button type="submit" class="search-btn" aria-label="Buscar">
+                <span class="material-symbols-outlined" aria-hidden="true">search</span>
+            </button>
+        </form>
+        <nav class="user-menu" aria-label="Menu de usuário">
+            <a href="wishlist.html" class="menu-item icon-link" aria-label="Lista de desejos">
+                <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+            </a>
+            <div class="account-menu-container">
+                <button type="button" id="btn-icon-login" class="menu-item icon-link btn-header-login" aria-label="Entrar na minha conta">
+                    <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
+                </button>
+                <div class="account-dropdown">
+                    <button type="button" id="btn-open-login" class="dropdown-item">Entrar na minha conta</button>
+                    <a href="cadastro.html" class="dropdown-item">Criar uma conta</a>
+                </div>
+            </div>
+            <a href="carrinho.html" class="menu-item icon-link" aria-label="Carrinho">
+                <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
+                <span class="cart-badge" id="cart-badge" hidden>0</span>
+            </a>
+        </nav>
+    </div>
+
+    <nav class="category-nav" aria-label="Categorias">
+        <ul class="category-list">
+            <li class="category-item">
+                <button type="button" class="menu-trigger" aria-expanded="false" aria-controls="category-menu">
+                    <span class="material-symbols-outlined" aria-hidden="true">menu</span> Categorias
+                </button>
+            </li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=infantis">Infantil</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=infantojuvenil">Juvenil</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=ficcao">Ficção</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=romance">Romance</a></li>
+        </ul>
+    </nav>
+
+    <!-- Painel FORA do <nav>, com [hidden]: mesmo padrão das demais páginas -->
+    <div class="category-menu" id="category-menu" hidden>
+        <ul class="category-menu-list">
+            <li><a href="resultado-busca.html?categoria=fantasia">Fantasia</a></li>
+            <li><a href="resultado-busca.html?categoria=ficcao-cientifica">Ficção científica</a></li>
+            <li><a href="resultado-busca.html?categoria=romance">Romance</a></li>
+            <li><a href="resultado-busca.html?categoria=misterio">Mistério e suspense</a></li>
+            <li><a href="resultado-busca.html?categoria=terror">Terror</a></li>
+            <li><a href="resultado-busca.html?categoria=ficcao-historica">Ficção histórica</a></li>
+            <li><a href="resultado-busca.html?categoria=acao">Ação e aventura</a></li>
+            <li><a href="resultado-busca.html?categoria=biografias">Biografias e memórias</a></li>
+            <li><a href="resultado-busca.html?categoria=autoajuda">Autoajuda</a></li>
+            <li><a href="resultado-busca.html?categoria=historia">História</a></li>
+            <li><a href="resultado-busca.html?categoria=ciencia">Ciência e tecnologia</a></li>
+            <li><a href="resultado-busca.html?categoria=negocios">Negócios e economia</a></li>
+            <li><a href="resultado-busca.html?categoria=filosofia">Filosofia e sociologia</a></li>
+            <li><a href="resultado-busca.html?categoria=religiao">Religião e espiritualidade</a></li>
+            <li><a href="resultado-busca.html?categoria=saude">Saúde</a></li>
+            <li><a href="resultado-busca.html?categoria=culinaria">Culinária</a></li>
+            <li><a href="resultado-busca.html?categoria=poesia">Poesia</a></li>
+            <li><a href="resultado-busca.html?categoria=hqs">HQs e Mangás</a></li>
+            <li><a href="resultado-busca.html?categoria=infantis">Livros infantis</a></li>
+            <li><a href="resultado-busca.html?categoria=infantojuvenil">Infantojuvenil</a></li>
+            <li><a href="resultado-busca.html?categoria=didaticos">Obras didáticas</a></li>
+        </ul>
+    </div>
+</header>
+
+<main class="main-content status-layout" id="main" tabindex="-1">
+    <section class="status-card" aria-labelledby="status-title">
+        <span class="material-symbols-outlined status-icon" aria-hidden="true">check_circle</span>
+        <h1 class="status-title" id="status-title">Pedido confirmado!</h1>
+        <p class="status-text">Obrigado pela sua compra no Acervo de Alexandria.</p>
+
+        <dl class="status-details">
+            <dt>Nº do pedido</dt>
+            <dd id="order-id"></dd>
+            <dt>Pagamento</dt>
+            <dd id="order-method"></dd>
+            <dt>Total</dt>
+            <dd id="order-total"></dd>
+        </dl>
+
+        <div class="status-actions">
+            <a href="index.html" class="btn-next-step">Voltar para a loja</a>
+        </div>
+    </section>
+</main>
+
+<footer class="main-footer">
+    <button type="button" id="backToTopBtn" class="back-to-top-bar">Voltar ao Topo</button>
+    <div class="footer-links-container">
+        <nav class="footer-nav" aria-label="Links de rodapé">
+            <a href="/sobre" class="footer-link">Sobre</a>
+            <a href="/contato" class="footer-link">Contato</a>
+            <a href="/ajuda" class="footer-link">Ajuda</a>
+            <a href="/social" class="footer-link">Social</a>
+        </nav>
+    </div>
+    <div class="footer-copyright">
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Acervo de Alexandria. Todos os direitos reservados.</p>
+
+            <!-- Selos em texto (sem dependência de imagens). Para usar as logos oficiais, baixe-as das páginas de marca de cada empresa para assets/img/payment/ e troque cada <span> por <img class="footer-pay-img"> -->
+            <div class="footer-payment-methods" role="group" aria-label="Métodos de pagamento aceitos">
+                <span class="footer-pay-badge">Visa</span>
+                <span class="footer-pay-badge">Mastercard</span>
+                <span class="footer-pay-badge">Amex</span>
+                <span class="footer-pay-badge">Google Pay</span>
+                <span class="footer-pay-badge">Apple Pay</span>
+                <span class="footer-pay-badge">PayPal</span>
+                <span class="footer-pay-badge">Pix</span>
+                <span class="footer-pay-badge">Bitcoin</span>
+                <span class="footer-pay-badge">Ethereum</span>
+                <span class="material-symbols-outlined footer-pay-icon" role="img" aria-label="Boleto">barcode</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- O modal de login é criado por js/index.js (um único <dialog> para todas as páginas) -->
+</body>
+</html>
