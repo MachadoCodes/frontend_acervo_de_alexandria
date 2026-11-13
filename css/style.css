@@ -2880,3 +2880,37 @@ button.forgot-password {
     font-weight: 700;
     white-space: nowrap;
 }
+
+/* Estado "no carrinho" (página de produto e wishlist) */
+.btn-add-cart.is-in-cart,
+.btn-wishlist-cart.is-in-cart {
+    background: var(--color-bg-white);
+    color: #c62828;
+    border: 1px solid #c62828;
+}
+
+.btn-add-cart.is-in-cart:hover,
+.btn-wishlist-cart.is-in-cart:hover {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.btn-wishlist-cart {
+    line-height: 1.2;
+}
+
+.cart-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 4px 8px;
+    color: #2e7d32;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.cart-status .material-symbols-outlined {
+    font-size: 20px;
+}

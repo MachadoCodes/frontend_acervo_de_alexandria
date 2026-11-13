@@ -1,6 +1,6 @@
 // js/wishlist.js — lista de desejos guardada no navegador (ver store.js)
 import {findBook} from './catalogo.js';
-import {readWishlist, removeFromWishlist, addToCart} from './store.js';
+import {readWishlist, removeFromWishlist, readCart, addToCart, removeFromCart} from './store.js';
 import {createBookCard, productUrl, pluralize} from './ui.js';
 
 const grid = document.getElementById('wishlist-grid');
@@ -19,6 +19,11 @@ const SORTERS = {
     'price-desc': (a, b) => b.book.price - a.book.price,
 };
 
+function renderCartButton(button, inCart) {
+    button.textContent = inCart ? 'Remover do carrinho' : 'Adicionar ao carrinho';
+    button.classList.toggle('is-in-cart', inCart);
+}
+
 function createCard(book) {
     const card = createBookCard(book, {headingTag: 'h2', extraClass: 'wishlist-card'});
     card.dataset.slug = book.slug;
@@ -26,11 +31,12 @@ function createCard(book) {
     const actions = document.createElement('div');
     actions.className = 'wishlist-actions';
 
+    // Alterna entre adicionar e remover do carrinho, sem sair da página
     const buy = document.createElement('button');
     buy.type = 'button';
     buy.className = 'btn-primary btn-wishlist-cart';
-    buy.textContent = 'Comprar';
-    buy.dataset.action = 'buy';
+    buy.dataset.action = 'cart';
+    renderCartButton(buy, readCart().some((item) => item.slug === book.slug));
 
     const remove = document.createElement('button');
     remove.type = 'button';
@@ -69,11 +75,17 @@ grid.addEventListener('click', (event) => {
         removeFromWishlist(card.dataset.slug);
         render();
         document.getElementById('main').focus();
-    } else if (button.dataset.action === 'buy') {
-        addToCart(card.dataset.slug, 1);
-        window.location.href = 'carrinho.html';
+    } else if (button.dataset.action === 'cart') {
+        const slug = card.dataset.slug;
+        const inCart = readCart().some((item) => item.slug === slug);
+        if (inCart) removeFromCart(slug);
+        else addToCart(slug, 1);
+        renderCartButton(button, !inCart);
     }
 });
 
 sortSelect.addEventListener('change', render);
+// Volta pelo botão "voltar" ou carrinho alterado em outra aba: reflete o estado dos botões
+window.addEventListener('pageshow', render);
+window.addEventListener('storage', render);
 render();
