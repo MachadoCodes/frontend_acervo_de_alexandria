@@ -1,6 +1,6 @@
 // js/produto.js — preenche a página do produto a partir de ?livro=<slug>
 import {BOOKS, findBook} from './catalogo.js';
-import {addToCart, isWished, toggleWishlist} from './store.js';
+import {addToCart, readCart, removeFromCart, setQty, isWished, toggleWishlist} from './store.js';
 import {formatCents} from './ui.js';
 
 const params = new URLSearchParams(window.location.search);
@@ -41,12 +41,48 @@ if (!book) {
         return li;
     }));
 
-    // Adicionar ao carrinho -> vai para o carrinho
+    // Carrinho: o card mostra se o livro já foi adicionado e o botão alterna entre adicionar e remover.
+    // A pessoa continua na página (a regra de negócio não manda ir para o carrinho).
+    const quantity = document.getElementById('quantity');
+    const addButton = document.getElementById('btn-add-cart');
+    const cartStatus = document.getElementById('cart-status');
+    const cartStatusText = document.getElementById('cart-status-text');
+
+    const cartItem = () => readCart().find((item) => item.slug === book.slug);
+
+    function renderCart() {
+        const item = cartItem();
+        addButton.textContent = item ? 'Remover do carrinho' : 'Adicionar ao carrinho';
+        addButton.classList.toggle('is-in-cart', Boolean(item));
+        cartStatus.hidden = !item;
+        if (!item) return;
+
+        // O carrinho aceita mais de 5 unidades; garante que o seletor tenha essa opção
+        if (![...quantity.options].some((option) => option.value === String(item.qty))) {
+            quantity.add(new Option(String(item.qty), String(item.qty)));
+        }
+        quantity.value = String(item.qty);
+        cartStatusText.textContent = `Adicionado ao carrinho (${item.qty} ${item.qty === 1 ? 'unidade' : 'unidades'})`;
+    }
+
     document.getElementById('purchase-form').addEventListener('submit', (event) => {
         event.preventDefault();
-        addToCart(book.slug, Number(document.getElementById('quantity').value) || 1);
-        window.location.href = 'carrinho.html';
+        if (cartItem()) removeFromCart(book.slug);
+        else addToCart(book.slug, Number(quantity.value) || 1);
+        renderCart();
     });
+
+    // Mudar a quantidade com o livro já no carrinho atualiza o carrinho
+    quantity.addEventListener('change', () => {
+        if (!cartItem()) return;
+        setQty(book.slug, Number(quantity.value));
+        renderCart();
+    });
+
+    // Carrinho alterado em outra aba, ou volta pelo botão "voltar" do navegador
+    window.addEventListener('storage', renderCart);
+    window.addEventListener('pageshow', renderCart);
+    renderCart();
 
     // Lista de desejos
     const wishButton = document.getElementById('btn-wishlist');

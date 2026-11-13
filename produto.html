@@ -137,7 +137,14 @@
                     </div>
 
                     <button type="button" class="btn-wishlist" id="btn-wishlist" aria-pressed="false">Adicionar à wishlist</button>
-                    <button type="submit" class="btn-add-cart">Adicionar ao carrinho</button>
+                    <!-- Alterna entre "Adicionar" e "Remover do carrinho" (js/produto.js); a página não muda -->
+                    <button type="submit" class="btn-add-cart" id="btn-add-cart">Adicionar ao carrinho</button>
+
+                    <p class="cart-status" id="cart-status" role="status" hidden>
+                        <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+                        <span id="cart-status-text"></span>
+                        <a href="carrinho.html" class="link-inline">Ver carrinho</a>
+                    </p>
                 </form>
             </aside>
         </div>
