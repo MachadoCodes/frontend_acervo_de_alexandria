@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Detalhes do livro Box Trilogia O Senhor dos Anéis no Acervo de Alexandria.">
+    <meta name="description" content="Detalhes do livro no Acervo de Alexandria.">
     <meta name="theme-color" content="#071E3A">
-    <title>Box Trilogia O Senhor dos Anéis — Acervo de Alexandria</title>
+    <title>Livro — Acervo de Alexandria</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=account_circle,chevron_left,chevron_right,favorite,local_shipping,menu,pause,play_arrow,search,shopping_cart&display=block">
+    <!-- Mesma URL em TODAS as páginas: o navegador baixa a fonte uma vez e reaproveita o cache (ordem alfabética obrigatória) -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=account_circle,barcode,check_circle,chevron_left,chevron_right,close,delete,favorite,lock,menu,pause,pix,play_arrow,qr_code_2,search,sell,shopping_cart,verified_user,visibility,visibility_off&display=block">
     <link rel="stylesheet" href="css/style.css">
     <script src="js/index.js" type="module"></script>
+    <script src="js/produto.js" type="module"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Pular para o conteúdo</a>
@@ -18,21 +21,35 @@
 <header class="main-header" id="top" tabindex="-1">
     <div class="header-bar">
         <a class="logo-container" href="index.html">
-            <img src="assets/img/aaLOGO.png" alt="Acervo de Alexandria" class="logo-img" width="180" height="90">
+            <img src="assets/img/aaLOGO.png" alt="Acervo de Alexandria — página inicial" class="logo-img" width="180" height="90">
         </a>
         <form class="search-bar" role="search" action="resultado-busca.html" method="get">
             <label class="visually-hidden" for="searchInput">Buscar livros no acervo</label>
-            <input type="search" id="searchInput" name="q" class="search-input" placeholder="O que está procurando…" autocomplete="off">
+            <input type="search" id="searchInput" name="q" class="search-input" placeholder="O que está procurando…" autocomplete="off" enterkeyhint="search">
             <button type="submit" class="search-btn" aria-label="Buscar">
                 <span class="material-symbols-outlined" aria-hidden="true">search</span>
             </button>
         </form>
         <nav class="user-menu" aria-label="Menu de usuário">
-            <a href="/wishlist" class="menu-item icon-link" aria-label="Lista de desejos"><span class="material-symbols-outlined">favorite</span></a>
-            <a href="/conta" class="menu-item icon-link" aria-label="Minha conta"><span class="material-symbols-outlined">account_circle</span></a>
-            <a href="/carrinho" class="menu-item icon-link" aria-label="Carrinho de compras"><span class="material-symbols-outlined">shopping_cart</span></a>
+            <a href="wishlist.html" class="menu-item icon-link" aria-label="Lista de desejos">
+                <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+            </a>
+            <div class="account-menu-container">
+                <button type="button" id="btn-icon-login" class="menu-item icon-link btn-header-login" aria-label="Entrar na minha conta">
+                    <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
+                </button>
+                <div class="account-dropdown">
+                    <button type="button" id="btn-open-login" class="dropdown-item">Entrar na minha conta</button>
+                    <a href="cadastro.html" class="dropdown-item">Criar uma conta</a>
+                </div>
+            </div>
+            <a href="carrinho.html" class="menu-item icon-link" aria-label="Carrinho">
+                <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
+                <span class="cart-badge" id="cart-badge" hidden>0</span>
+            </a>
         </nav>
     </div>
+
     <nav class="category-nav" aria-label="Categorias">
         <ul class="category-list">
             <li class="category-item">
@@ -40,96 +57,104 @@
                     <span class="material-symbols-outlined" aria-hidden="true">menu</span> Categorias
                 </button>
             </li>
-            <li class="category-item"><a href="/infantil">Infantil</a></li>
-            <li class="category-item"><a href="/juvenil">Juvenil</a></li>
-            <li class="category-item"><a href="/ficcao">Ficção</a></li>
-            <li class="category-item"><a href="/romance">Romance</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=infantis">Infantil</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=infantojuvenil">Juvenil</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=ficcao">Ficção</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=romance">Romance</a></li>
         </ul>
     </nav>
-    <!-- Menu Dropdown de Categorias -->
+
+    <!-- Painel FORA do <nav>, com [hidden]: mesmo padrão das demais páginas -->
     <div class="category-menu" id="category-menu" hidden>
         <ul class="category-menu-list">
-            <li><a href="/categoria/fantasia">Fantasia</a></li>
-            <li><a href="/categoria/ficcao-cientifica">Ficção científica</a></li>
-            <li><a href="/categoria/romance">Romance</a></li>
-            <li><a href="/categoria/misterio">Mistério e suspense</a></li>
-            <li><a href="/categoria/terror">Terror</a></li>
-            <li><a href="/categoria/ficcao-historica">Ficção histórica</a></li>
-            <li><a href="/categoria/acao">Ação e aventura</a></li>
-            <li><a href="/categoria/biografias">Biografias e memórias</a></li>
-            <li><a href="/categoria/autoajuda">Autoajuda</a></li>
-            <li><a href="/categoria/historia">História</a></li>
-            <li><a href="/categoria/ciencia">Ciência e tecnologia</a></li>
-            <li><a href="/categoria/negocios">Negócios e economia</a></li>
-            <li><a href="/categoria/filosofia">Filosofia e sociologia</a></li>
-            <li><a href="/categoria/religiao">Religião e espiritualidade</a></li>
-            <li><a href="/categoria/saude">Saúde</a></li>
-            <li><a href="/categoria/culinaria">Culinária</a></li>
-            <li><a href="/categoria/poesia">Poesia</a></li>
-            <li><a href="/categoria/hqs">HQs e Mangás</a></li>
-            <li><a href="/categoria/infantis">Livros infantis</a></li>
-            <li><a href="/categoria/infantojuvenil">Infantojuvenil</a></li>
-            <li><a href="/categoria/didaticos">Obras didáticas</a></li>
+            <li><a href="resultado-busca.html?categoria=fantasia">Fantasia</a></li>
+            <li><a href="resultado-busca.html?categoria=ficcao-cientifica">Ficção científica</a></li>
+            <li><a href="resultado-busca.html?categoria=romance">Romance</a></li>
+            <li><a href="resultado-busca.html?categoria=misterio">Mistério e suspense</a></li>
+            <li><a href="resultado-busca.html?categoria=terror">Terror</a></li>
+            <li><a href="resultado-busca.html?categoria=ficcao-historica">Ficção histórica</a></li>
+            <li><a href="resultado-busca.html?categoria=acao">Ação e aventura</a></li>
+            <li><a href="resultado-busca.html?categoria=biografias">Biografias e memórias</a></li>
+            <li><a href="resultado-busca.html?categoria=autoajuda">Autoajuda</a></li>
+            <li><a href="resultado-busca.html?categoria=historia">História</a></li>
+            <li><a href="resultado-busca.html?categoria=ciencia">Ciência e tecnologia</a></li>
+            <li><a href="resultado-busca.html?categoria=negocios">Negócios e economia</a></li>
+            <li><a href="resultado-busca.html?categoria=filosofia">Filosofia e sociologia</a></li>
+            <li><a href="resultado-busca.html?categoria=religiao">Religião e espiritualidade</a></li>
+            <li><a href="resultado-busca.html?categoria=saude">Saúde</a></li>
+            <li><a href="resultado-busca.html?categoria=culinaria">Culinária</a></li>
+            <li><a href="resultado-busca.html?categoria=poesia">Poesia</a></li>
+            <li><a href="resultado-busca.html?categoria=hqs">HQs e Mangás</a></li>
+            <li><a href="resultado-busca.html?categoria=infantis">Livros infantis</a></li>
+            <li><a href="resultado-busca.html?categoria=infantojuvenil">Infantojuvenil</a></li>
+            <li><a href="resultado-busca.html?categoria=didaticos">Obras didáticas</a></li>
         </ul>
     </div>
 </header>
 
 <main class="main-content product-layout" id="main" tabindex="-1">
 
-    <div class="product-grid-top">
-        <!-- Coluna 1: Imagem -->
-        <section class="product-image-col">
-            <img src="assets/img/livro-aneis.jpg" alt="Capa do Box Trilogia O Senhor dos Anéis" class="product-image" width="300" height="450">
-        </section>
-
-        <!-- Coluna 2: Título e Sinopse -->
-        <section class="product-info-col">
-            <div class="product-title-group">
-                <h1 class="product-title">Box Trilogia O Senhor dos Anéis</h1>
-                <p class="product-author-name">por J. R. R. Tolkien</p>
-            </div>
-
-            <div class="product-synopsis-text">
-                <p>A fantástica jornada de Frodo Bolseiro para destruir o Um Anel e salvar a Terra-média do Senhor Sombrio Sauron. Este box exclusivo reúne os três volumes da obra-prima de J.R.R. Tolkien: A Sociedade do Anel, As Duas Torres e O Retorno do Rei, com ilustrações originais e capa dura.</p>
-            </div>
-        </section>
-
-        <!-- Coluna 3: Caixa de Compra -->
-        <aside class="product-buy-col">
-            <p class="buy-price-value">R$ 207,20</p>
-            <p class="stock-status">Disponível em estoque</p>
-
-            <form class="purchase-form" action="carrinho.html" method="get">
-                <div class="buy-quantity">
-                    <label for="quantity">Quantidade</label>
-                    <select id="quantity" name="qtd" class="qty-select">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                    </select>
-                </div>
-
-                <button type="button" class="btn-wishlist">Adicionar à wishlist</button>
-                <button type="submit" class="btn-add-cart">Adicionar ao carrinho</button>
-            </form>
-        </aside>
+    <div class="empty-state" id="product-not-found" hidden>
+        <h1>Livro não encontrado</h1>
+        <p>Não encontramos o livro que você procura.</p>
+        <a href="index.html" class="btn-next-step">Voltar para a loja</a>
     </div>
 
-    <!-- Linha Inferior: Detalhes do Produto -->
-    <section class="product-details-bottom">
-        <h2 class="details-title">Detalhes do produto</h2>
+    <div id="product-content">
+        <div class="product-grid-top">
+            <!-- Coluna 1: Imagem -->
+            <section class="product-image-col" aria-label="Capa do livro">
+                <img src="assets/img/placeholder-capa.svg" alt="" class="product-image" id="product-cover" width="300" height="450">
+            </section>
 
-        <ul class="specs-list">
-            <li><strong>Editora:</strong> HarperCollins</li>
-            <li><strong>Idioma:</strong> Português</li>
-            <li><strong>Capa:</strong> Capa dura</li>
-            <li><strong>Páginas:</strong> 1568 páginas</li>
-            <li><strong>ISBN-13:</strong> 978-8595086357</li>
-            <li><strong>Dimensões:</strong> 21.6 x 14.2 x 9.6 cm</li>
-        </ul>
-    </section>
+            <!-- Coluna 2: Título e sinopse -->
+            <section class="product-info-col">
+                <div class="product-title-group">
+                    <h1 class="product-title" id="product-title">Carregando…</h1>
+                    <p class="product-author-name" id="product-author"></p>
+                </div>
+
+                <div class="product-synopsis-text">
+                    <p id="product-synopsis"></p>
+                </div>
+            </section>
+
+            <!-- Coluna 3: Caixa de compra -->
+            <aside class="product-buy-col" aria-label="Comprar">
+                <p class="buy-price-value" id="product-price"></p>
+                <p class="stock-status">Disponível em estoque</p>
+
+                <form class="purchase-form" id="purchase-form" action="carrinho.html" method="get">
+                    <div class="buy-quantity">
+                        <label for="quantity">Quantidade</label>
+                        <select id="quantity" name="qtd" class="qty-select">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn-wishlist" id="btn-wishlist" aria-pressed="false">Adicionar à wishlist</button>
+                    <!-- Alterna entre "Adicionar" e "Remover do carrinho" (js/produto.js); a página não muda -->
+                    <button type="submit" class="btn-add-cart" id="btn-add-cart">Adicionar ao carrinho</button>
+
+                    <p class="cart-status" id="cart-status" role="status" hidden>
+                        <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+                        <span id="cart-status-text"></span>
+                        <a href="carrinho.html" class="link-inline">Ver carrinho</a>
+                    </p>
+                </form>
+            </aside>
+        </div>
+
+        <!-- Linha inferior: detalhes (só aparece se o livro tiver especificações) -->
+        <section class="product-details-bottom" id="product-details" aria-labelledby="details-title">
+            <h2 class="details-title" id="details-title">Detalhes do produto</h2>
+            <ul class="specs-list" id="product-specs"></ul>
+        </section>
+    </div>
 </main>
 
 <footer class="main-footer">
@@ -143,8 +168,26 @@
         </nav>
     </div>
     <div class="footer-copyright">
-        <p>&copy; 2026 Acervo de Alexandria. Todos os direitos reservados.</p>
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Acervo de Alexandria. Todos os direitos reservados.</p>
+
+            <!-- Selos em texto (sem dependência de imagens). Para usar as logos oficiais, baixe-as das páginas de marca de cada empresa para assets/img/payment/ e troque cada <span> por <img class="footer-pay-img"> -->
+            <div class="footer-payment-methods" role="group" aria-label="Métodos de pagamento aceitos">
+                <span class="footer-pay-badge">Visa</span>
+                <span class="footer-pay-badge">Mastercard</span>
+                <span class="footer-pay-badge">Amex</span>
+                <span class="footer-pay-badge">Google Pay</span>
+                <span class="footer-pay-badge">Apple Pay</span>
+                <span class="footer-pay-badge">PayPal</span>
+                <span class="footer-pay-badge">Pix</span>
+                <span class="footer-pay-badge">Bitcoin</span>
+                <span class="footer-pay-badge">Ethereum</span>
+                <span class="material-symbols-outlined footer-pay-icon" role="img" aria-label="Boleto">barcode</span>
+            </div>
+        </div>
     </div>
 </footer>
+
+<!-- O modal de login é criado por js/index.js (um único <dialog> para todas as páginas) -->
 </body>
 </html>

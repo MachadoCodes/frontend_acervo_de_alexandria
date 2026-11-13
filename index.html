@@ -3,18 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description"
-          content="Acervo de Alexandria: livraria online com livros infantis, juvenis, ficção e romance.">
+    <meta name="description" content="Acervo de Alexandria: livraria online com livros infantis, juvenis, ficção e romance.">
     <meta name="theme-color" content="#071E3A">
     <title>Acervo de Alexandria — Livraria online</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Pinned axes + only the icons in use (icon names must be alphabetical) -->
+    <!-- Mesma URL em TODAS as páginas: o navegador baixa a fonte uma vez e reaproveita o cache (ordem alfabética obrigatória) -->
     <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=account_circle,chevron_left,chevron_right,favorite,menu,pause,play_arrow,search,shopping_cart&display=block">
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=account_circle,barcode,check_circle,chevron_left,chevron_right,close,delete,favorite,lock,menu,pause,pix,play_arrow,qr_code_2,search,sell,shopping_cart,verified_user,visibility,visibility_off&display=block">
     <link rel="stylesheet" href="css/style.css">
-    <!-- Modules are deferred by default -->
     <script src="js/index.js" type="module"></script>
 </head>
 <body>
@@ -23,33 +20,35 @@
 <header class="main-header" id="top" tabindex="-1">
     <div class="header-bar">
         <a class="logo-container" href="index.html">
-            <img src="assets/img/aaLOGO.png" alt="Acervo de Alexandria — página inicial"
-                 class="logo-img" width="180" height="90">
+            <img src="assets/img/aaLOGO.png" alt="Acervo de Alexandria — página inicial" class="logo-img" width="180" height="90">
         </a>
-
         <form class="search-bar" role="search" action="resultado-busca.html" method="get">
             <label class="visually-hidden" for="searchInput">Buscar livros no acervo</label>
-            <input type="search" id="searchInput" name="q" class="search-input"
-                   placeholder="O que está procurando…" autocomplete="off" enterkeyhint="search">
+            <input type="search" id="searchInput" name="q" class="search-input" placeholder="O que está procurando…" autocomplete="off" enterkeyhint="search">
             <button type="submit" class="search-btn" aria-label="Buscar">
                 <span class="material-symbols-outlined" aria-hidden="true">search</span>
             </button>
         </form>
-
         <nav class="user-menu" aria-label="Menu de usuário">
-            <a href="/wishlist" class="menu-item icon-link" aria-label="Lista de desejos">
+            <a href="wishlist.html" class="menu-item icon-link" aria-label="Lista de desejos">
                 <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
             </a>
-            <a href="/conta" class="menu-item icon-link" aria-label="Minha conta">
-                <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
-            </a>
-            <a href="/carrinho" class="menu-item icon-link" aria-label="Carrinho de compras">
+            <div class="account-menu-container">
+                <button type="button" id="btn-icon-login" class="menu-item icon-link btn-header-login" aria-label="Entrar na minha conta">
+                    <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
+                </button>
+                <div class="account-dropdown">
+                    <button type="button" id="btn-open-login" class="dropdown-item">Entrar na minha conta</button>
+                    <a href="cadastro.html" class="dropdown-item">Criar uma conta</a>
+                </div>
+            </div>
+            <a href="carrinho.html" class="menu-item icon-link" aria-label="Carrinho">
                 <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
+                <span class="cart-badge" id="cart-badge" hidden>0</span>
             </a>
         </nav>
     </div>
 
-    <!-- Category nav lives inside the header: a single sticky element, no magic offsets -->
     <nav class="category-nav" aria-label="Categorias">
         <ul class="category-list">
             <li class="category-item">
@@ -57,20 +56,37 @@
                     <span class="material-symbols-outlined" aria-hidden="true">menu</span> Categorias
                 </button>
             </li>
-            <li class="category-item"><a href="/infantil">Infantil</a></li>
-            <li class="category-item"><a href="/juvenil">Juvenil</a></li>
-            <li class="category-item"><a href="/ficcao">Ficção</a></li>
-            <li class="category-item"><a href="/romance">Romance</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=infantis">Infantil</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=infantojuvenil">Juvenil</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=ficcao">Ficção</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=romance">Romance</a></li>
         </ul>
     </nav>
 
-    <!-- Placeholder panel: replace the links with the full category list from the back end -->
+    <!-- Painel FORA do <nav>, com [hidden]: mesmo padrão das demais páginas -->
     <div class="category-menu" id="category-menu" hidden>
         <ul class="category-menu-list">
-            <li><a href="/infantil">Infantil</a></li>
-            <li><a href="/juvenil">Juvenil</a></li>
-            <li><a href="/ficcao">Ficção</a></li>
-            <li><a href="/romance">Romance</a></li>
+            <li><a href="resultado-busca.html?categoria=fantasia">Fantasia</a></li>
+            <li><a href="resultado-busca.html?categoria=ficcao-cientifica">Ficção científica</a></li>
+            <li><a href="resultado-busca.html?categoria=romance">Romance</a></li>
+            <li><a href="resultado-busca.html?categoria=misterio">Mistério e suspense</a></li>
+            <li><a href="resultado-busca.html?categoria=terror">Terror</a></li>
+            <li><a href="resultado-busca.html?categoria=ficcao-historica">Ficção histórica</a></li>
+            <li><a href="resultado-busca.html?categoria=acao">Ação e aventura</a></li>
+            <li><a href="resultado-busca.html?categoria=biografias">Biografias e memórias</a></li>
+            <li><a href="resultado-busca.html?categoria=autoajuda">Autoajuda</a></li>
+            <li><a href="resultado-busca.html?categoria=historia">História</a></li>
+            <li><a href="resultado-busca.html?categoria=ciencia">Ciência e tecnologia</a></li>
+            <li><a href="resultado-busca.html?categoria=negocios">Negócios e economia</a></li>
+            <li><a href="resultado-busca.html?categoria=filosofia">Filosofia e sociologia</a></li>
+            <li><a href="resultado-busca.html?categoria=religiao">Religião e espiritualidade</a></li>
+            <li><a href="resultado-busca.html?categoria=saude">Saúde</a></li>
+            <li><a href="resultado-busca.html?categoria=culinaria">Culinária</a></li>
+            <li><a href="resultado-busca.html?categoria=poesia">Poesia</a></li>
+            <li><a href="resultado-busca.html?categoria=hqs">HQs e Mangás</a></li>
+            <li><a href="resultado-busca.html?categoria=infantis">Livros infantis</a></li>
+            <li><a href="resultado-busca.html?categoria=infantojuvenil">Infantojuvenil</a></li>
+            <li><a href="resultado-busca.html?categoria=didaticos">Obras didáticas</a></li>
         </ul>
     </div>
 </header>
@@ -86,21 +102,21 @@
                 <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="1 de 4">
                     <!-- First slide is the likely LCP element: never lazy-load it -->
                     <img src="assets/img/banner-principal.png" alt="Livros infantis para incentivar a leitura!"
-                         class="banner-img" width="848" height="350" fetchpriority="high">
+                         class="banner-img" fetchpriority="high">
                 </div>
                 <!-- Slides 2–4: placeholder images and alt texts, replace with the real banners.
                      To make a slide clickable, wrap its <img> in an <a>. -->
                 <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="2 de 4">
                     <img src="assets/img/banner-2.png" alt="Promoção de livros juvenis"
-                         class="banner-img" width="848" height="350" loading="lazy" decoding="async">
+                         class="banner-img" loading="lazy" decoding="async">
                 </div>
                 <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="3 de 4">
                     <img src="assets/img/banner-3.png" alt="Os melhores livros de ficção"
-                         class="banner-img" width="848" height="350" loading="lazy" decoding="async">
+                         class="banner-img" loading="lazy" decoding="async">
                 </div>
                 <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="4 de 4">
                     <img src="assets/img/banner-4.png" alt="Romances para todos os gostos"
-                         class="banner-img" width="848" height="350" loading="lazy" decoding="async">
+                         class="banner-img" loading="lazy" decoding="async">
                 </div>
             </div>
         </div>
@@ -115,7 +131,7 @@
                     <img src="assets/img/livro-aneis.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/box-trilogia-o-senhor-dos-aneis">Box Trilogia O Senhor dos
+                        <a class="book-link" href="produto.html?livro=box-trilogia-o-senhor-dos-aneis">Box Trilogia O Senhor dos
                             Anéis</a>
                     </h3>
                     <p class="book-author">J. R. R. Tolkien</p>
@@ -127,7 +143,7 @@
                     <img src="assets/img/livro-hp.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/box-harry-potter-scholastic">Box Harry Potter Scholastic</a>
+                        <a class="book-link" href="produto.html?livro=box-harry-potter-scholastic">Box Harry Potter Scholastic</a>
                     </h3>
                     <p class="book-author">J.K. Rowling</p>
                     <p class="book-price">
@@ -138,7 +154,7 @@
                     <img src="assets/img/livro-quixote.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/dom-quixote">Dom Quixote</a>
+                        <a class="book-link" href="produto.html?livro=dom-quixote">Dom Quixote</a>
                     </h3>
                     <p class="book-author">Miguel de Cervantes Saavedra</p>
                     <p class="book-price">
@@ -149,7 +165,7 @@
                     <img src="assets/img/livro-biblia.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/biblia-sagrada-com-harpa-e-indice">Bíblia Sagrada Com Harpa e
+                        <a class="book-link" href="produto.html?livro=biblia-sagrada-com-harpa-e-indice">Bíblia Sagrada Com Harpa e
                             Índice</a>
                     </h3>
                     <!-- No author: element omitted instead of a "-" placeholder -->
@@ -162,7 +178,7 @@
                     <img src="assets/img/livro-pequeno-principe.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/o-pequeno-principe">O Pequeno Príncipe</a>
+                        <a class="book-link" href="produto.html?livro=o-pequeno-principe">O Pequeno Príncipe</a>
                     </h3>
                     <p class="book-author">Antoine de Saint-Exupéry</p>
                     <p class="book-price">
@@ -173,7 +189,7 @@
                     <img src="assets/img/livro-1984.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/1984">1984</a>
+                        <a class="book-link" href="produto.html?livro=1984">1984</a>
                     </h3>
                     <p class="book-author">George Orwell</p>
                     <p class="book-price">
@@ -184,7 +200,7 @@
                     <img src="assets/img/livro-orgulho.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/orgulho-e-preconceito">Orgulho e Preconceito</a>
+                        <a class="book-link" href="produto.html?livro=orgulho-e-preconceito">Orgulho e Preconceito</a>
                     </h3>
                     <p class="book-author">Jane Austen</p>
                     <p class="book-price">
@@ -195,7 +211,7 @@
                     <img src="assets/img/livro-hobbit.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/o-hobbit">O Hobbit</a>
+                        <a class="book-link" href="produto.html?livro=o-hobbit">O Hobbit</a>
                     </h3>
                     <p class="book-author">J. R. R. Tolkien</p>
                     <p class="book-price">
@@ -216,7 +232,7 @@
                     <img src="assets/img/livro-quando.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/quando">Quando</a>
+                        <a class="book-link" href="produto.html?livro=quando">Quando</a>
                     </h3>
                     <p class="book-author">Carla Madeira</p>
                     <p class="book-price">
@@ -227,7 +243,7 @@
                     <img src="assets/img/livro-coben.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/nao-se-deixe-enganar">Não se deixe enganar</a>
+                        <a class="book-link" href="produto.html?livro=nao-se-deixe-enganar">Não se deixe enganar</a>
                     </h3>
                     <p class="book-author">Harlan Coben</p>
                     <p class="book-price">
@@ -238,7 +254,7 @@
                     <img src="assets/img/livro-grego.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/licoes-de-grego">Lições de grego</a>
+                        <a class="book-link" href="produto.html?livro=licoes-de-grego">Lições de grego</a>
                     </h3>
                     <p class="book-author">Han Kang</p>
                     <p class="book-price">
@@ -249,7 +265,7 @@
                     <img src="assets/img/livro-terra.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/terra-a-deriva">Terra à deriva</a>
+                        <a class="book-link" href="produto.html?livro=terra-a-deriva">Terra à deriva</a>
                     </h3>
                     <p class="book-author">Cixin Liu</p>
                     <p class="book-price">
@@ -261,7 +277,7 @@
                     <img src="assets/img/livro-torto-arado.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/torto-arado">Torto Arado</a>
+                        <a class="book-link" href="produto.html?livro=torto-arado">Torto Arado</a>
                     </h3>
                     <p class="book-author">Itamar Vieira Junior</p>
                     <p class="book-price">
@@ -272,7 +288,7 @@
                     <img src="assets/img/livro-dom-casmurro.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/dom-casmurro">Dom Casmurro</a>
+                        <a class="book-link" href="produto.html?livro=dom-casmurro">Dom Casmurro</a>
                     </h3>
                     <p class="book-author">Machado de Assis</p>
                     <p class="book-price">
@@ -283,7 +299,7 @@
                     <img src="assets/img/livro-capitaes.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/capitaes-da-areia">Capitães da Areia</a>
+                        <a class="book-link" href="produto.html?livro=capitaes-da-areia">Capitães da Areia</a>
                     </h3>
                     <p class="book-author">Jorge Amado</p>
                     <p class="book-price">
@@ -294,7 +310,7 @@
                     <img src="assets/img/livro-bras-cubas.jpg" alt="" class="book-cover"
                          width="120" height="180" loading="lazy" decoding="async">
                     <h3 class="book-title">
-                        <a class="book-link" href="/livros/memorias-postumas-de-bras-cubas">Memórias Póstumas de Brás
+                        <a class="book-link" href="produto.html?livro=memorias-postumas-de-bras-cubas">Memórias Póstumas de Brás
                             Cubas</a>
                     </h3>
                     <p class="book-author">Machado de Assis</p>
@@ -315,9 +331,7 @@
 </main>
 
 <footer class="main-footer">
-    <button type="button" id="backToTopBtn" class="back-to-top-bar">
-        Voltar ao Topo
-    </button>
+    <button type="button" id="backToTopBtn" class="back-to-top-bar">Voltar ao Topo</button>
     <div class="footer-links-container">
         <nav class="footer-nav" aria-label="Links de rodapé">
             <a href="/sobre" class="footer-link">Sobre</a>
@@ -327,8 +341,26 @@
         </nav>
     </div>
     <div class="footer-copyright">
-        <p>&copy; 2026 Acervo de Alexandria. Todos os direitos reservados.</p>
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Acervo de Alexandria. Todos os direitos reservados.</p>
+
+            <!-- Selos em texto (sem dependência de imagens). Para usar as logos oficiais, baixe-as das páginas de marca de cada empresa para assets/img/payment/ e troque cada <span> por <img class="footer-pay-img"> -->
+            <div class="footer-payment-methods" aria-label="Métodos de pagamento aceitos">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/Visa_Inc._logo_%282014–2021%29.svg" alt="Visa" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg" alt="Mastercard" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg" alt="Amex" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Pay_Logo_%282020%29.svg" alt="Google Pay" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" alt="Apple Pay" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Pix_%28Brazil%29_logo.svg" alt="Pix" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" alt="Bitcoin" class="footer-pay-img">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/Ethereum_logo_translucent.svg" alt="Ethereum" class="footer-pay-img">
+                <span class="material-symbols-outlined footer-pay-icon" aria-hidden="true">barcode</span>
+            </div>
+        </div>
     </div>
 </footer>
+
+<!-- O modal de login é criado por js/index.js (um único <dialog> para todas as páginas) -->
 </body>
 </html>
