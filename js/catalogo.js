@@ -1,6 +1,12 @@
-// js/catalogo.js — catálogo MOCK (dados de exemplo).
-// Quando a API Spring Boot estiver pronta, substitua BOOKS por uma chamada fetch('/api/livros')
-// mantendo o mesmo formato de objeto: o restante do front-end não precisa mudar.
+// catálogo do front-end.
+// Fonte principal: API Spring Boot (GET /livros), carregada uma vez ao importar este módulo.
+// Se a API estiver fora do ar (ou USE_API = false), cai no catálogo de EXEMPLO abaixo e a loja segue
+// funcionando. `catalogSource` diz qual fonte está em uso: 'api' ou 'mock'.
+// Formato do livro no front: {slug, title, author, price (centavos), cover, categories[], synopsis, specs?}
+// Na API o slug é o próprio id numérico do livro (como texto).
+
+import {USE_API, coverUrlForIsbn} from './config.js';
+import {listarLivros} from './api.js';
 
 export const CATEGORIES = {
     infantis: 'Livros infantis',
@@ -28,7 +34,7 @@ export const CATEGORIES = {
 };
 
 // price em CENTAVOS (inteiro): evita erros de arredondamento
-export const BOOKS = [
+export let BOOKS = [
     {
         slug: 'box-trilogia-o-senhor-dos-aneis', title: 'Box Trilogia O Senhor dos Anéis', author: 'J. R. R. Tolkien',
         price: 20720, cover: 'assets/img/livro-aneis.jpg', categories: ['fantasia', 'ficcao'],
@@ -116,3 +122,41 @@ export const BOOKS = [
 ];
 
 export const findBook = (slug) => BOOKS.find((book) => book.slug === slug);
+
+/* ----- Integração com a API ----- */
+export let catalogSource = 'mock';
+
+const COVER_PLACEHOLDER = 'assets/img/placeholder-capa.svg';
+
+/** LivroResponseDTO -> livro do front. Valores inesperados da API viram padrões seguros. */
+export function livroToBook(livro) {
+    const price = Math.round(Number(livro.preco) * 100);
+    return {
+        slug: String(livro.id),
+        title: String(livro.titulo ?? '').trim() || 'Sem título',
+        // O dataset usa "A/B/C" para vários autores
+        author: String(livro.autor ?? '').split('/').map((name) => name.replace(/\s+/g, ' ').trim()).filter(Boolean).join(', '),
+        price: Number.isFinite(price) && price >= 0 ? price : 0,
+        cover: coverUrlForIsbn(livro.isbn) ?? COVER_PLACEHOLDER,
+        categories: [], // a API ainda não tem categorias
+        synopsis: '', // nem sinopse
+        year: Number.isInteger(livro.anoPublicacao) ? livro.anoPublicacao : null,
+        stock: Number.isInteger(livro.quantidadeEstoque) ? livro.quantidadeEstoque : null,
+        specs: {
+            'ISBN': livro.isbn ? String(livro.isbn) : '',
+            'Ano de publicação': Number.isInteger(livro.anoPublicacao) ? String(livro.anoPublicacao) : '',
+        },
+    };
+}
+
+if (USE_API) {
+    try {
+        const livros = await listarLivros({timeout: 4000});
+        if (livros.length) {
+            BOOKS = livros.map(livroToBook);
+            catalogSource = 'api';
+        }
+    } catch {
+        /* API indisponível: mantém o catálogo de exemplo */
+    }
+}
