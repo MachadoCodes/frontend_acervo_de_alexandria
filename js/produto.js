@@ -26,12 +26,12 @@ if (!book) {
     const author = document.getElementById('product-author');
     author.textContent = book.author ? `por ${book.author}` : '';
     author.hidden = !book.author;
-    document.getElementById('product-synopsis').textContent = book.synopsis;
+    document.getElementById('product-synopsis').textContent = book.synopsis || 'Sinopse ainda não disponível para este livro.';
     document.getElementById('product-price').textContent = formatCents(book.price);
 
     // Especificações: só aparecem as que existem para este livro
     const specs = document.getElementById('product-specs');
-    const entries = Object.entries(book.specs ?? {});
+    const entries = Object.entries(book.specs ?? {}).filter(([, value]) => value);
     document.getElementById('product-details').hidden = entries.length === 0;
     specs.replaceChildren(...entries.map(([label, value]) => {
         const li = document.createElement('li');
@@ -97,3 +97,4 @@ if (!book) {
     });
     renderWish();
 }
+

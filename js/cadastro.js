@@ -1,3 +1,33 @@
+import {registrarUsuario, ApiError} from './api.js';
+
+const onlyDigits = (value) => value.replace(/\D/g, '');
+
+/** Campos do formulário -> UsuarioRequestDTO da API. O endereço é um único texto no back-end. */
+function buildRegisterPayload(form) {
+    const value = (name) => (form.elements[name]?.value ?? '').trim();
+    const address = [
+        `${value('address')}, ${value('number')}`,
+        value('complement'),
+        `${value('city')} - ${value('state')}`,
+        `CEP ${value('zip')}`,
+    ].filter(Boolean).join(', ');
+    return {
+        nome: value('name'),
+        cpf: onlyDigits(value('document')),
+        telefoneMovel: `${value('phoneCode')}${onlyDigits(value('phone'))}`.replace(/\s/g, ''),
+        email: value('email'),
+        senha: form.elements.password.value,
+        endereco: address.slice(0, 255),
+    };
+}
+
+function registerErrorMessage(error) {
+    if (error.status === 0) return error.message;
+    if (error.status === 401 || error.status === 403) {
+        return 'O servidor ainda não aceita cadastros públicos. Avise a equipe do back-end.';
+    }
+    return error.message || 'Não foi possível criar a conta. Confira os dados e tente novamente.';
+}
 function initRegisterForm() {
     const form = document.getElementById('form-cadastro');
     const btnSubmit = document.getElementById('btn-submit-register');
@@ -46,15 +76,35 @@ function initRegisterForm() {
 
     // MOCK: sem back-end, segue para a página de sucesso. Em produção, remova o preventDefault
     // para o POST seguir ao servidor (a senha nunca deve ir na URL: por isso o form é POST).
-    form.addEventListener('submit', (event) => {
+    // Envia o cadastro para a API (POST /usuarios). A senha vai no corpo JSON, nunca na URL.
+    const formError = document.createElement('p');
+    formError.className = 'form-submit-error';
+    formError.setAttribute('role', 'alert');
+    formError.hidden = true;
+    btnSubmit.before(formError);
+
+    form.addEventListener('submit', async (event) => {
         event.preventDefault();
         checkFormValidity();
         if (!form.checkValidity()) {
             form.reportValidity();
             return;
         }
+        formError.hidden = true;
         btnSubmit.disabled = true;
-        window.location.href = 'sucesso-cadastro.html';
+        const originalLabel = btnSubmit.textContent;
+        btnSubmit.textContent = 'CRIANDO CONTA…';
+        try {
+            await registrarUsuario(buildRegisterPayload(form));
+            window.location.href = 'sucesso-cadastro.html';
+        } catch (error) {
+            formError.textContent = error instanceof ApiError
+                ? registerErrorMessage(error)
+                : 'Não foi possível criar a conta agora. Tente novamente.';
+            formError.hidden = false;
+            btnSubmit.textContent = originalLabel;
+            checkFormValidity();
+        }
     });
 
     /* --- 2. Lógica Dinâmica: CPF vs Passaporte --- */

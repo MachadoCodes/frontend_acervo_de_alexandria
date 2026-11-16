@@ -2914,3 +2914,21 @@ button.forgot-password {
 .cart-status .material-symbols-outlined {
     font-size: 20px;
 }
+
+/* Erro de envio (cadastro, pagamento, login) vindo da API */
+.form-submit-error,
+.modal-error {
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border: 1px solid #c0392b;
+    border-radius: 6px;
+    background: #fdecea;
+    color: #8e1f13;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.form-submit-error[hidden],
+.modal-error[hidden] {
+    display: none;
+}

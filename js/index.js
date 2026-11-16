@@ -1,5 +1,5 @@
 // js/index.js — carregado com <script type="module"> (deferido, modo estrito, sem globais)
-
+import {login, logout, isLoggedIn, currentUser, ApiError} from './api.js';
 const prefersReducedMotion = () =>
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -401,6 +401,7 @@ const LOGIN_MODAL_HTML = `
                         Esqueci minha senha
                     </button>
                 </div>
+                <p class="modal-error" id="login-error" role="alert" hidden></p>
                 <div class="modal-actions">
                     <button type="submit" class="btn-primary btn-login-submit">ENTRAR</button>
                 </div>
@@ -557,15 +558,79 @@ function setupLoginModal() {
 
     // MOCK. Em produção, remova o preventDefault para o POST nativo seguir ao Spring Security
     // (com token CSRF) ou use fetch() enviando o token no cabeçalho.
-    dialog.querySelector('#form-login').addEventListener('submit', (event) => {
+    // Login via API (POST /login devolve o JWT, guardado por api.js)
+    const loginForm = dialog.querySelector('#form-login');
+    const loginError = dialog.querySelector('#login-error');
+    const loginSubmit = loginForm.querySelector('button[type="submit"]');
+    loginForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-        dialog.close();
+        loginError.hidden = true;
+        loginSubmit.disabled = true;
+        try {
+            await login(loginEmail.value.trim(), passwordInput.value);
+            dialog.close();
+        } catch (error) {
+            loginError.textContent = !(error instanceof ApiError)
+                ? 'Não foi possível entrar agora. Tente novamente.'
+                : error.status === 0 ? error.message
+                    : error.status === 401 || error.status === 403 ? 'E-mail ou senha incorretos.'
+                        : error.message;
+            loginError.hidden = false;
+        } finally {
+            loginSubmit.disabled = false;
+        }
+    });
+    dialog.addEventListener('close', () => {
+        loginError.hidden = true;
     });
 
     dialog.querySelector('#form-forgot').addEventListener('submit', (event) => {
         event.preventDefault();
         forgotStatus.textContent =
             'Se o e-mail existir em nossos registros, você receberá as instruções em breve.';
+    });
+}
+
+function updateAccountMenu() {
+    const openButton = document.getElementById('btn-open-login');
+    const iconButton = document.getElementById('btn-icon-login');
+    if (!openButton) return;
+    const user = isLoggedIn() ? currentUser() : null;
+    openButton.textContent = user ? 'Sair' : 'Entrar na minha conta';
+    openButton.dataset.mode = user ? 'logout' : 'login';
+    iconButton?.setAttribute('aria-label', user ? `Conta de ${user.email}` : 'Entrar na minha conta');
+    document.querySelector('.dropdown-item[href="cadastro.html"]')?.toggleAttribute('hidden', Boolean(user));
+}
+
+function setupAccountMenu() {
+    // Captura: roda antes do clique que abriria o modal de login
+    document.getElementById('btn-open-login')?.addEventListener('click', (event) => {
+        if (event.currentTarget.dataset.mode !== 'logout') return;
+        event.stopImmediatePropagation();
+        logout();
+    }, true);
+    document.getElementById('btn-icon-login')?.addEventListener('click', (event) => {
+        if (!isLoggedIn()) return;
+        event.stopImmediatePropagation(); // logado: o ícone não reabre o login
+    }, true);
+    updateAccountMenu();
+    window.addEventListener('acervo:auth-changed', updateAccountMenu);
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'alexandria_token') updateAccountMenu();
+    });
+}
+
+async function hydrateHomeShelves() {
+    const shelves = [...document.querySelectorAll('.book-shelf')].filter((shelf) => shelf.querySelector('.shelf-carousel'));
+    if (!shelves.length) return;
+    const [{BOOKS, catalogSource}, {createBookCard}] = await Promise.all([import('./catalogo.js'), import('./ui.js')]);
+    if (catalogSource !== 'api' || !BOOKS.length) return;
+
+    const byNewest = [...BOOKS].sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
+    const lists = [BOOKS, byNewest]; // Bestsellers: ordem do catálogo; Lançamentos: mais recentes
+    shelves.forEach((shelf, index) => {
+        const books = (lists[index] ?? BOOKS).slice(0, 12);
+        shelf.querySelector('.shelf-carousel').replaceChildren(...books.map((book) => createBookCard(book)));
     });
 }
 
@@ -633,8 +698,11 @@ setupCoverFallback();
 setupBackToTop();
 setupCategoryMenu();
 setupLoginModal();
+setupAccountMenu();
 updateCartBadge();
 document.querySelectorAll('.hero-banner').forEach(setupHeroCarousel);
+// Troca os livros de exemplo pelos da API (se houver) ANTES de montar os carrosséis
+await hydrateHomeShelves().catch(() => {});
 document.querySelectorAll('.book-shelf').forEach(setupShelfCarousel);
 
 // Outra aba alterou o carrinho
