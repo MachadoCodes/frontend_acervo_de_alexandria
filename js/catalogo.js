@@ -128,6 +128,9 @@ export let catalogSource = 'mock';
 
 const COVER_PLACEHOLDER = 'assets/img/placeholder-capa.svg';
 
+// Enum FormatoLivro da API -> texto para exibir
+const FORMATS = {CAPA_COMUM: 'Capa comum', CAPA_DURA: 'Capa dura', EBOOK: 'E-book', AUDIOBOOK: 'Audiolivro'};
+
 /** LivroResponseDTO -> livro do front. Valores inesperados da API viram padrões seguros. */
 export function livroToBook(livro) {
     const price = Math.round(Number(livro.preco) * 100);
@@ -142,7 +145,11 @@ export function livroToBook(livro) {
         synopsis: '', // nem sinopse
         year: Number.isInteger(livro.anoPublicacao) ? livro.anoPublicacao : null,
         stock: Number.isInteger(livro.quantidadeEstoque) ? livro.quantidadeEstoque : null,
+        rating: Number.isFinite(Number(livro.avaliacao)) ? Number(livro.avaliacao) : null,
         specs: {
+            'Editora': livro.editora ? String(livro.editora) : '',
+            'Idioma': livro.idioma ? String(livro.idioma) : '',
+            'Formato': FORMATS[livro.formato] ?? '',
             'ISBN': livro.isbn ? String(livro.isbn) : '',
             'Ano de publicação': Number.isInteger(livro.anoPublicacao) ? String(livro.anoPublicacao) : '',
         },
