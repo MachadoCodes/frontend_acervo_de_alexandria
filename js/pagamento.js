@@ -1,5 +1,8 @@
 // js/pagamento.js — carregado com <script type="module"> (deferido, modo estrito, sem globais)
 import {readCart, cartSubtotalCents, clearCart, readDelivery, saveOrder, SHIPPING_CENTS} from './store.js';
+import {isLoggedIn} from './api.js';
+import {catalogSource} from './catalogo.js';
+import {submitOrderToApi} from './pedido.js';
 
 const currency = new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'});
 const formatCents = (cents) => currency.format(cents / 100);
@@ -278,10 +281,21 @@ function initPayment() {
     });
 
     /* --- Evita clique duplo --- */
+    const orderError = document.createElement('p');
+    orderError.className = 'form-submit-error';
+    orderError.setAttribute('role', 'alert');
+    orderError.hidden = true;
+    submitButton.before(orderError);
+
     form.addEventListener('submit', (event) => {
-        // MOCK: sem back-end, o pedido é "concluído" aqui. Em produção, remova o preventDefault
-        // para o POST seguir ao servidor (com token CSRF e gateway de pagamento).
+        orderError.hidden = true;
+        // Com a API no ar o pedido é criado no servidor (pedido.js). O pagamento em si continua
+        // simulado: a API ainda não tem gateway. Sem API (catálogo de exemplo), tudo é local.
         event.preventDefault();
+        if (catalogSource === 'api' && !isLoggedIn()) {
+            document.dispatchEvent(new CustomEvent('acervo:open-login'));
+            return;
+        }
         submitButton.disabled = true;
         submitButton.setAttribute('aria-busy', 'true');
         submitButton.textContent = 'PROCESSANDO…';
@@ -293,11 +307,23 @@ function initPayment() {
             method: METHOD_LABELS[method] ?? '',
             total: finalTotal.textContent,
         };
-        setTimeout(() => {
-            saveOrder(order);
+        const finish = (finalOrder) => {
+            saveOrder(finalOrder);
             clearCart();
             window.location.href = 'sucesso.html';
-        }, 900);
+        };
+        if (catalogSource !== 'api') {
+            setTimeout(() => finish(order), 900);
+            return;
+        }
+        submitOrderToApi(readCart())
+            // O total mostrado é o que a pessoa viu (frete, cupom e Pix incluídos); a API só guarda o valor dos livros
+            .then((apiOrder) => finish({...order, id: `AA-${String(apiOrder.id).padStart(6, '0')}`}))
+            .catch((error) => {
+                updatePaymentView(); // reativa o botão e restaura o rótulo
+                orderError.textContent = error.message || 'Não foi possível finalizar o pedido.';
+                orderError.hidden = false;
+            });
     });
 
     // Restaura o estado ao voltar pelo botão "voltar" do navegador (bfcache)
