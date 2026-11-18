@@ -2932,3 +2932,14 @@ button.forgot-password {
 .modal-error[hidden] {
     display: none;
 }
+
+/* Botão "Carregar mais" da busca (paginação) */
+.btn-load-more {
+    display: block;
+    margin: 24px auto;
+    padding: 12px 32px;
+}
+
+.btn-load-more[hidden] {
+    display: none;
+}
