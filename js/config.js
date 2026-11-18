@@ -23,8 +23,8 @@ export const USE_API = window.ACERVO_USE_API !== false;
 /** Tempo máximo de espera por resposta (ms). */
 export const API_TIMEOUT_MS = 45000;
 
-/** Quantos livros carregar para o catálogo do front (a API pagina; padrão dela é 10). */
-export const CATALOG_PAGE_SIZE = 200;
+/** Livros por página nas listagens e na busca (o banco tem milhares: nunca carregamos tudo). */
+export const CATALOG_PAGE_SIZE = 48;
 
 /**
  * A API ainda não tem campo de capa. Enquanto isso, tenta a capa pelo ISBN no Open Library;
