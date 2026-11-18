@@ -623,15 +623,19 @@ function setupAccountMenu() {
 async function hydrateHomeShelves() {
     const shelves = [...document.querySelectorAll('.book-shelf')].filter((shelf) => shelf.querySelector('.shelf-carousel'));
     if (!shelves.length) return;
-    const [{BOOKS, catalogSource}, {createBookCard}] = await Promise.all([import('./catalogo.js'), import('./ui.js')]);
-    if (catalogSource !== 'api' || !BOOKS.length) return;
+    const [{catalogSource, livroToBook, registerBooks}, {createBookCard}, {listarLivros}] =
+        await Promise.all([import('./catalogo.js'), import('./ui.js'), import('./api.js')]);
+    if (catalogSource !== 'api') return;
 
-    const byNewest = [...BOOKS].sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
-    const lists = [BOOKS, byNewest]; // Bestsellers: ordem do catálogo; Lançamentos: mais recentes
-    shelves.forEach((shelf, index) => {
-        const books = (lists[index] ?? BOOKS).slice(0, 12);
+    // O servidor ordena (milhares de livros): Bestsellers = mais bem avaliados; Lançamentos = mais recentes
+    const sorts = ['avaliacao,desc', 'anoPublicacao,desc'];
+    await Promise.all(shelves.map(async (shelf, index) => {
+        if (!sorts[index]) return;
+        const livros = await listarLivros({size: 12, sort: sorts[index]});
+        if (!livros.length) return;
+        const books = registerBooks(livros.map(livroToBook));
         shelf.querySelector('.shelf-carousel').replaceChildren(...books.map((book) => createBookCard(book)));
-    });
+    }));
 }
 
 /* ==========================================================================
