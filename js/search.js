@@ -1,5 +1,8 @@
-// js/search.js — resultados de busca / categoria sobre o catálogo MOCK (ver catalogo.js)
-import {BOOKS, CATEGORIES} from './catalogo.js';
+// js/search.js — resultados de busca / categoria.
+// Com a API no ar, a busca roda NO SERVIDOR (GET /livros/busca, paginada): o banco tem milhares de livros.
+// Sem a API, filtra o catálogo de exemplo (catalogo.js).
+import {BOOKS, CATEGORIES, catalogSource, livroToBook, registerBooks} from './catalogo.js';
+import {buscarLivrosPorTitulo, listarPaginaLivros} from './api.js';
 import {createBookCard, pluralize} from './ui.js';
 
 const params = new URLSearchParams(window.location.search);
@@ -54,8 +57,11 @@ const PRICE_RANGES = {
 const checkedValues = (name) =>
     [...document.querySelectorAll(`input[name="${name}"]:checked`)].map((box) => box.value);
 
+const useApi = catalogSource === 'api';
+
 function matches(book) {
-    if (query) {
+    // Com a API o texto da busca já foi filtrado pelo servidor
+    if (query && !useApi) {
         const haystack = normalize(`${book.title} ${book.author}`);
         if (!normalize(query).split(/\s+/).every((word) => haystack.includes(word))) return false;
     }
@@ -75,16 +81,62 @@ function matches(book) {
     return true;
 }
 
+/* ----- Resultados e paginação ----- */
+let results = useApi ? [] : BOOKS; // livros carregados até agora
+let page = 0;
+let total = null;
+let hasMore = useApi;
+let loading = false;
+let loadError = '';
+
+const moreButton = document.createElement('button');
+moreButton.type = 'button';
+moreButton.className = 'btn-primary btn-load-more';
+moreButton.textContent = 'CARREGAR MAIS';
+moreButton.hidden = true;
+grid.after(moreButton);
+
 function render() {
-    const results = BOOKS.filter(matches);
-    grid.replaceChildren(...results.map((book) => createBookCard(book)));
-    grid.hidden = results.length === 0;
-    emptyState.hidden = results.length > 0;
-    count.textContent = results.length
-        ? `Exibindo ${pluralize(results.length, 'livro encontrado', 'livros encontrados')}`
-        : 'Nenhum livro encontrado';
+    const visible = results.filter(matches);
+    grid.replaceChildren(...visible.map((book) => createBookCard(book)));
+    grid.hidden = visible.length === 0;
+    emptyState.hidden = visible.length > 0 || loading;
+    const filtering = visible.length !== results.length;
+    if (visible.length) {
+        const of = useApi && total !== null && !filtering ? ` de ${total}` : '';
+        count.textContent = `Exibindo ${visible.length}${of} ${visible.length === 1 ? 'livro' : 'livros'}`;
+    } else {
+        count.textContent = loading ? 'Buscando…' : 'Nenhum livro encontrado';
+    }
+    if (loadError) count.textContent = loadError;
+    moreButton.hidden = !(useApi && hasMore && !loadError);
+    moreButton.disabled = loading;
+    moreButton.textContent = loading ? 'CARREGANDO…' : 'CARREGAR MAIS';
 }
 
+async function loadMore() {
+    if (loading || !hasMore) return;
+    loading = true;
+    loadError = '';
+    render();
+    try {
+        const data = query
+            ? await buscarLivrosPorTitulo(query, {page})
+            : await listarPaginaLivros({page});
+        results = results.concat(registerBooks(data.content.map(livroToBook)));
+        total = data.total;
+        hasMore = !data.last;
+        page += 1;
+    } catch (error) {
+        loadError = error.message || 'Não foi possível buscar os livros agora.';
+        hasMore = false;
+    } finally {
+        loading = false;
+        render();
+    }
+}
+
+moreButton.addEventListener('click', loadMore);
 document.querySelector('.search-filters').addEventListener('change', render);
 document.querySelector('.btn-price-apply').addEventListener('click', render);
 [minPrice, maxPrice].forEach((input) =>
@@ -95,4 +147,8 @@ document.querySelector('.btn-price-apply').addEventListener('click', render);
         }
     })
 );
+
+// Categorias ainda não existem na API: sem busca por texto, não há o que listar
+if (useApi && categoryLabel && !query) hasMore = false;
 render();
+if (useApi && hasMore) loadMore();
