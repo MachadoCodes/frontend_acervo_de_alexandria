@@ -132,15 +132,33 @@ export async function login(email, senha) {
 /** dto = {nome, cpf, telefoneFixo?, telefoneMovel, email, senha, endereco} */
 export const registrarUsuario = (dto) => request('/usuarios', {method: 'POST', body: dto});
 
-/* ----- Livros (públicos) ----- */
-export async function listarLivros({size = CATALOG_PAGE_SIZE, page = 0, timeout} = {}) {
-    const data = await request(`/livros?size=${size}&page=${page}`, {timeout});
-    return Array.isArray(data?.content) ? data.content : [];
+// A API devolve um Page do Spring: {content, totalElements, last, ...}. `sort` ex.: 'anoPublicacao,desc'
+function toPage(data) {
+    return {
+        content: Array.isArray(data?.content) ? data.content : [],
+        total: Number.isInteger(data?.totalElements) ? data.totalElements : null,
+        last: data?.last !== false,
+    };
 }
+
+/** Uma página de livros (GET /livros). */
+export async function listarPaginaLivros({size = CATALOG_PAGE_SIZE, page = 0, sort, timeout} = {}) {
+    const params = new URLSearchParams({size, page});
+    if (sort) params.set('sort', sort);
+    return toPage(await request(`/livros?${params}`, {timeout}));
+}
+
+/** Atalho: só a lista de livros da primeira página. */
+export async function listarLivros(options = {}) {
+    return (await listarPaginaLivros(options)).content;
+}
+
 export const buscarLivro = (id) => request(`/livros/${encodeURIComponent(id)}`);
-export async function buscarLivrosPorTitulo(titulo) {
-    const data = await request(`/livros/busca?titulo=${encodeURIComponent(titulo)}&size=${CATALOG_PAGE_SIZE}`);
-    return Array.isArray(data?.content) ? data.content : [];
+
+/** Busca no servidor pelo título (GET /livros/busca), paginada. */
+export async function buscarLivrosPorTitulo(titulo, {size = CATALOG_PAGE_SIZE, page = 0} = {}) {
+    const params = new URLSearchParams({titulo, size, page});
+    return toPage(await request(`/livros/busca?${params}`));
 }
 
 /* ----- Carrinho e pedidos (exigem login) ----- */
