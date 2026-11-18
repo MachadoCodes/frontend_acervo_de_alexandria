@@ -13,7 +13,7 @@ function storedUrl() {
     }
 }
 
-const rawUrl = window.ACERVO_API_URL || storedUrl() || 'http://localhost:8080';
+const rawUrl = window.ACERVO_API_URL || storedUrl() || 'https://api-acervo-alexandria-cnft.onrender.com';
 
 export const API_BASE_URL = String(rawUrl).replace(/\/+$/, '');
 
@@ -21,7 +21,7 @@ export const API_BASE_URL = String(rawUrl).replace(/\/+$/, '');
 export const USE_API = window.ACERVO_USE_API !== false;
 
 /** Tempo máximo de espera por resposta (ms). */
-export const API_TIMEOUT_MS = 8000;
+export const API_TIMEOUT_MS = 45000;
 
 /** Quantos livros carregar para o catálogo do front (a API pagina; padrão dela é 10). */
 export const CATALOG_PAGE_SIZE = 200;
