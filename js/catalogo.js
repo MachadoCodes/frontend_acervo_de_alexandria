@@ -5,8 +5,8 @@
 // Formato do livro no front: {slug, title, author, price (centavos), cover, categories[], synopsis, specs?}
 // Na API o slug é o próprio id numérico do livro (como texto).
 
-import {USE_API, coverUrlForIsbn} from './config.js';
-import {listarLivros} from './api.js';
+import {USE_API, coverUrlForIsbn, API_TIMEOUT_MS} from './config.js';
+import {listarLivros, buscarLivro} from './api.js';
 
 export const CATEGORIES = {
     infantis: 'Livros infantis',
@@ -156,12 +156,52 @@ export function livroToBook(livro) {
     };
 }
 
+/**
+ * O banco tem milhares de livros: o front guarda só os que já viu (home, busca, produto, carrinho).
+ * Registra livros novos em BOOKS e devolve os objetos canônicos (sem duplicar).
+ */
+export function registerBooks(books) {
+    return books.map((book) => {
+        const existing = findBook(book.slug);
+        if (existing) return existing;
+        BOOKS.push(book);
+        return book;
+    });
+}
+
+/** Busca por id os livros que a página atual precisa e ainda não estão carregados. */
+async function loadReferencedBooks() {
+    const ids = new Set();
+    const fromUrl = new URLSearchParams(window.location.search).get('livro');
+    if (fromUrl) ids.add(fromUrl);
+    for (const key of ['alexandria_cart', 'alexandria_wishlist']) {
+        try {
+            const value = JSON.parse(localStorage.getItem(key));
+            if (Array.isArray(value)) {
+                value.forEach((entry) => ids.add(typeof entry === 'string' ? entry : entry?.slug));
+            }
+        } catch {
+            /* sem armazenamento ou JSON inválido: ignora */
+        }
+    }
+    const missing = [...ids].filter((id) => typeof id === 'string' && /^\d{1,12}$/.test(id) && !findBook(id)).slice(0, 50);
+    await Promise.all(missing.map(async (id) => {
+        try {
+            registerBooks([livroToBook(await buscarLivro(id))]);
+        } catch {
+            /* livro removido/indisponível: a página trata como não encontrado */
+        }
+    }));
+}
+
 if (USE_API) {
     try {
-        const livros = await listarLivros({timeout: 4000});
+        // Só um teste de que a API responde (no Render grátis a 1ª chamada pode demorar ~1 min: servidor acordando)
+        const livros = await listarLivros({size: 12, timeout: API_TIMEOUT_MS});
         if (livros.length) {
             BOOKS = livros.map(livroToBook);
             catalogSource = 'api';
+            await loadReferencedBooks();
         }
     } catch {
         /* API indisponível: mantém o catálogo de exemplo */
