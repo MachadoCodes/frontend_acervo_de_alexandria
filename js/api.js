@@ -132,6 +132,22 @@ export async function login(email, senha) {
 /** dto = {nome, cpf, telefoneFixo?, telefoneMovel, email, senha, endereco} */
 export const registrarUsuario = (dto) => request('/usuarios', {method: 'POST', body: dto});
 
+/* ----- Perfil do usuário (exigem login) ----- */
+// A API ainda não tem "GET /usuarios/me": procuramos o usuário logado pelo e-mail na lista.
+export async function meuPerfil() {
+    const email = currentUser()?.email?.toLowerCase();
+    const lista = await request('/usuarios', {auth: true});
+    const perfil = Array.isArray(lista) ? lista.find((u) => String(u?.email).toLowerCase() === email) : null;
+    if (!perfil) throw new ApiError('Não encontramos o seu perfil.', 404);
+    return perfil;
+}
+
+/** dto = {nome, cpf, telefoneFixo?, telefoneMovel, email, senha, endereco} (a API exige todos, inclusive CPF e senha) */
+export const atualizarUsuario = (id, dto) =>
+    request(`/usuarios/${encodeURIComponent(id)}`, {method: 'PUT', body: dto, auth: true});
+
+/* ----- Livros (públicos) ----- */
+
 // A API devolve um Page do Spring: {content, totalElements, last, ...}. `sort` ex.: 'anoPublicacao,desc'
 function toPage(data) {
     return {

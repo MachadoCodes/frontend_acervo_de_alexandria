@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Seu perfil no Acervo de Alexandria.">
+    <meta name="theme-color" content="#071E3A">
+    <title>Perfil — Acervo de Alexandria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://covers.openlibrary.org">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Mesma URL em TODAS as páginas: o navegador baixa a fonte uma vez e reaproveita o cache (ordem alfabética obrigatória) -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=account_circle,barcode,check_circle,chevron_left,chevron_right,close,delete,favorite,lock,menu,pause,pix,play_arrow,qr_code_2,search,sell,shopping_cart,verified_user,visibility,visibility_off&display=block">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/index.js" type="module"></script>
+    <script src="js/perfil.js" type="module"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Pular para o conteúdo</a>
+
+<header class="main-header" id="top" tabindex="-1">
+    <div class="header-bar">
+        <a class="logo-container" href="index.html">
+            <img src="assets/img/aaLOGO.png" alt="Acervo de Alexandria — página inicial" class="logo-img" width="180" height="90">
+        </a>
+        <form class="search-bar" role="search" action="resultado-busca.html" method="get">
+            <label class="visually-hidden" for="searchInput">Buscar livros no acervo</label>
+            <input type="search" id="searchInput" name="q" class="search-input" placeholder="O que está procurando…" autocomplete="off" enterkeyhint="search">
+            <button type="submit" class="search-btn" aria-label="Buscar">
+                <span class="material-symbols-outlined" aria-hidden="true">search</span>
+            </button>
+        </form>
+        <nav class="user-menu" aria-label="Menu de usuário">
+            <a href="wishlist.html" class="menu-item icon-link" aria-label="Lista de desejos">
+                <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+            </a>
+            <div class="account-menu-container">
+                <button type="button" id="btn-icon-login" class="menu-item icon-link btn-header-login" aria-label="Entrar na minha conta">
+                    <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
+                </button>
+                <div class="account-dropdown">
+                    <button type="button" id="btn-open-login" class="dropdown-item">Entrar na minha conta</button>
+                    <a href="cadastro.html" class="dropdown-item">Criar uma conta</a>
+                </div>
+            </div>
+            <a href="carrinho.html" class="menu-item icon-link" aria-label="Carrinho">
+                <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
+                <span class="cart-badge" id="cart-badge" hidden>0</span>
+            </a>
+        </nav>
+    </div>
+
+    <nav class="category-nav" aria-label="Categorias">
+        <ul class="category-list">
+            <li class="category-item">
+                <button type="button" class="menu-trigger" aria-expanded="false" aria-controls="category-menu">
+                    <span class="material-symbols-outlined" aria-hidden="true">menu</span> Categorias
+                </button>
+            </li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=infantis">Infantil</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=infantojuvenil">Juvenil</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=ficcao">Ficção</a></li>
+            <li class="category-item"><a href="resultado-busca.html?categoria=romance">Romance</a></li>
+        </ul>
+    </nav>
+
+    <!-- Painel FORA do <nav>, com [hidden]: mesmo padrão das demais páginas -->
+    <div class="category-menu" id="category-menu" hidden>
+        <ul class="category-menu-list">
+            <li><a href="resultado-busca.html?categoria=fantasia">Fantasia</a></li>
+            <li><a href="resultado-busca.html?categoria=ficcao-cientifica">Ficção científica</a></li>
+            <li><a href="resultado-busca.html?categoria=romance">Romance</a></li>
+            <li><a href="resultado-busca.html?categoria=misterio">Mistério e suspense</a></li>
+            <li><a href="resultado-busca.html?categoria=terror">Terror</a></li>
+            <li><a href="resultado-busca.html?categoria=ficcao-historica">Ficção histórica</a></li>
+            <li><a href="resultado-busca.html?categoria=acao">Ação e aventura</a></li>
+            <li><a href="resultado-busca.html?categoria=biografias">Biografias e memórias</a></li>
+            <li><a href="resultado-busca.html?categoria=autoajuda">Autoajuda</a></li>
+            <li><a href="resultado-busca.html?categoria=historia">História</a></li>
+            <li><a href="resultado-busca.html?categoria=ciencia">Ciência e tecnologia</a></li>
+            <li><a href="resultado-busca.html?categoria=negocios">Negócios e economia</a></li>
+            <li><a href="resultado-busca.html?categoria=filosofia">Filosofia e sociologia</a></li>
+            <li><a href="resultado-busca.html?categoria=religiao">Religião e espiritualidade</a></li>
+            <li><a href="resultado-busca.html?categoria=saude">Saúde</a></li>
+            <li><a href="resultado-busca.html?categoria=culinaria">Culinária</a></li>
+            <li><a href="resultado-busca.html?categoria=poesia">Poesia</a></li>
+            <li><a href="resultado-busca.html?categoria=hqs">HQs e Mangás</a></li>
+            <li><a href="resultado-busca.html?categoria=infantis">Livros infantis</a></li>
+            <li><a href="resultado-busca.html?categoria=infantojuvenil">Infantojuvenil</a></li>
+            <li><a href="resultado-busca.html?categoria=didaticos">Obras didáticas</a></li>
+        </ul>
+    </div>
+</header>
+
+<main class="main-content register-layout" id="main" tabindex="-1">
+    <div class="register-container profile-container">
+        <div class="register-header">
+            <h1 class="register-title">Meu perfil</h1>
+            <p class="register-subtitle" id="profile-subtitle">Veja e atualize os seus dados.</p>
+        </div>
+
+        <!-- Sem login -->
+        <div class="profile-guest" id="profile-guest" hidden>
+            <p>Entre na sua conta para ver e editar o seu perfil.</p>
+            <button type="button" class="btn-primary" id="profile-login-btn">ENTRAR</button>
+        </div>
+
+        <p class="profile-status" id="profile-loading" role="status">Carregando seu perfil…</p>
+        <p class="form-submit-error" id="profile-error" role="alert" hidden></p>
+
+        <div id="profile-content" hidden>
+            <!-- Foto -->
+            <section class="profile-photo" aria-labelledby="photo-title">
+                <h2 class="section-title" id="photo-title">Foto</h2>
+                <div class="profile-photo-row">
+                    <div class="profile-avatar" id="profile-avatar" aria-hidden="true">
+                        <span class="material-symbols-outlined profile-avatar-icon">account_circle</span>
+                    </div>
+                    <div class="profile-photo-actions">
+                        <label class="btn-secondary profile-file-btn" for="profile-photo-input">Escolher foto</label>
+                        <input type="file" id="profile-photo-input" class="visually-hidden" accept="image/jpeg,image/png,image/webp">
+                        <button type="button" class="link-inline" id="profile-photo-remove" hidden>Remover foto</button>
+                        <p class="profile-hint">JPG, PNG ou WebP. A foto fica guardada só neste navegador.</p>
+                        <p class="profile-hint is-error" id="profile-photo-error" role="alert" hidden></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dados -->
+            <form class="register-form" id="form-perfil" novalidate>
+                <fieldset class="form-section">
+                    <legend class="section-title">Dados pessoais</legend>
+
+                    <div class="form-group">
+                        <label for="perfil-nome">Nome completo <span class="required">*</span></label>
+                        <input type="text" id="perfil-nome" name="nome" class="form-input" required maxlength="100" autocomplete="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="perfil-email">E-mail</label>
+                        <input type="email" id="perfil-email" name="email" class="form-input" readonly>
+                        <p class="profile-hint">O e-mail é o seu login e não pode ser alterado aqui.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="perfil-movel">Celular <span class="required">*</span></label>
+                        <input type="tel" id="perfil-movel" name="telefoneMovel" class="form-input" required maxlength="20" autocomplete="tel">
+                    </div>
+                    <div class="form-group">
+                        <label for="perfil-fixo">Telefone fixo</label>
+                        <input type="tel" id="perfil-fixo" name="telefoneFixo" class="form-input" maxlength="20" autocomplete="tel-national">
+                    </div>
+                    <div class="form-group">
+                        <label for="perfil-endereco">Endereço <span class="required">*</span></label>
+                        <input type="text" id="perfil-endereco" name="endereco" class="form-input" required maxlength="255" autocomplete="street-address">
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section">
+                    <legend class="section-title">Confirme para salvar</legend>
+                    <p class="profile-hint">Por segurança, informe o seu CPF e a sua senha atual.</p>
+                    <div class="form-group">
+                        <label for="perfil-cpf">CPF <span class="required">*</span></label>
+                        <input type="text" id="perfil-cpf" name="cpf" class="form-input" required inputmode="numeric" placeholder="000.000.000-00" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="perfil-senha">Senha atual <span class="required">*</span></label>
+                        <input type="password" id="perfil-senha" name="senha" class="form-input" required autocomplete="current-password">
+                    </div>
+                    <div class="form-group">
+                        <label for="perfil-nova-senha">Nova senha (opcional)</label>
+                        <input type="password" id="perfil-nova-senha" name="novaSenha" class="form-input" minlength="8" maxlength="72" autocomplete="new-password">
+                        <p class="profile-hint">Deixe em branco para manter a senha atual.</p>
+                    </div>
+                </fieldset>
+
+                <p class="form-submit-error" id="profile-save-error" role="alert" hidden></p>
+                <p class="profile-success" id="profile-save-ok" role="status" hidden>Dados atualizados com sucesso.</p>
+                <button type="submit" class="btn-primary" id="profile-save">SALVAR ALTERAÇÕES</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer class="main-footer">
+    <button type="button" id="backToTopBtn" class="back-to-top-bar">Voltar ao Topo</button>
+    <div class="footer-links-container">
+        <nav class="footer-nav" aria-label="Links de rodapé">
+            <a href="/sobre" class="footer-link">Sobre</a>
+            <a href="/contato" class="footer-link">Contato</a>
+            <a href="/ajuda" class="footer-link">Ajuda</a>
+            <a href="/social" class="footer-link">Social</a>
+        </nav>
+    </div>
+    <div class="footer-copyright">
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Acervo de Alexandria. Todos os direitos reservados.</p>
+
+            <!-- Selos em texto (sem dependência de imagens). Para usar as logos oficiais, baixe-as das páginas de marca de cada empresa para assets/img/payment/ e troque cada <span> por <img class="footer-pay-img"> -->
+            <div class="footer-payment-methods" role="group" aria-label="Métodos de pagamento aceitos">
+                <span class="footer-pay-badge">Visa</span>
+                <span class="footer-pay-badge">Mastercard</span>
+                <span class="footer-pay-badge">Amex</span>
+                <span class="footer-pay-badge">Google Pay</span>
+                <span class="footer-pay-badge">Apple Pay</span>
+                <span class="footer-pay-badge">PayPal</span>
+                <span class="footer-pay-badge">Pix</span>
+                <span class="footer-pay-badge">Bitcoin</span>
+                <span class="footer-pay-badge">Ethereum</span>
+                <span class="material-symbols-outlined footer-pay-icon" role="img" aria-label="Boleto">barcode</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- O modal de login é criado por js/index.js (um único <dialog> para todas as páginas) -->
+</body>
+</html>
