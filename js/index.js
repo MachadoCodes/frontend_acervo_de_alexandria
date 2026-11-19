@@ -1,5 +1,6 @@
 // js/index.js — carregado com <script type="module"> (deferido, modo estrito, sem globais)
 import {login, logout, isLoggedIn, currentUser, ApiError} from './api.js';
+import {getAvatar, getDisplayName} from './conta.js';
 const prefersReducedMotion = () =>
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -573,7 +574,7 @@ function setupLoginModal() {
             loginError.textContent = !(error instanceof ApiError)
                 ? 'Não foi possível entrar agora. Tente novamente.'
                 : error.status === 0 ? error.message
-                    : error.status === 401 || error.status === 403 ? 'E-mail ou senha incorretos.'
+                    : [400, 401, 403, 404].includes(error.status) ? 'E-mail ou senha incorretos.'
                         : error.message;
             loginError.hidden = false;
         } finally {
@@ -594,12 +595,47 @@ function setupLoginModal() {
 function updateAccountMenu() {
     const openButton = document.getElementById('btn-open-login');
     const iconButton = document.getElementById('btn-icon-login');
-    if (!openButton) return;
+    const dropdown = document.querySelector('.account-dropdown');
+    if (!openButton || !dropdown) return;
     const user = isLoggedIn() ? currentUser() : null;
     openButton.textContent = user ? 'Sair' : 'Entrar na minha conta';
     openButton.dataset.mode = user ? 'logout' : 'login';
+    dropdown.querySelector('.dropdown-item[href="cadastro.html"]')?.toggleAttribute('hidden', Boolean(user));
+
+    // Cabeçalho do menu ("Olá, Fulano") e link do perfil: só existem logado
+    dropdown.querySelectorAll('[data-auth-only]').forEach((element) => element.remove());
+    if (user) {
+        const name = getDisplayName(user.email);
+        const info = document.createElement('div');
+        info.className = 'dropdown-user';
+        info.dataset.authOnly = '';
+        const hello = document.createElement('strong');
+        hello.textContent = name ? `Olá, ${name.split(' ')[0]}` : 'Você está conectado';
+        const email = document.createElement('span');
+        email.textContent = user.email;
+        info.append(hello, email);
+        const profile = document.createElement('a');
+        profile.href = 'perfil.html';
+        profile.className = 'dropdown-item';
+        profile.dataset.authOnly = '';
+        profile.textContent = 'Meu perfil';
+        dropdown.prepend(info, profile);
+    }
+
+    // Ícone do cabeçalho: foto (se houver) e marcação de "conectado"
+    iconButton?.classList.toggle('is-logged-in', Boolean(user));
     iconButton?.setAttribute('aria-label', user ? `Conta de ${user.email}` : 'Entrar na minha conta');
-    document.querySelector('.dropdown-item[href="cadastro.html"]')?.toggleAttribute('hidden', Boolean(user));
+    const icon = iconButton?.querySelector('.material-symbols-outlined');
+    iconButton?.querySelector('.header-avatar')?.remove();
+    const photo = user ? getAvatar(user.email) : null;
+    if (icon) icon.hidden = Boolean(photo);
+    if (photo && iconButton) {
+        const img = document.createElement('img');
+        img.src = photo;
+        img.alt = '';
+        img.className = 'header-avatar';
+        iconButton.prepend(img);
+    }
 }
 
 function setupAccountMenu() {
@@ -611,7 +647,8 @@ function setupAccountMenu() {
     }, true);
     document.getElementById('btn-icon-login')?.addEventListener('click', (event) => {
         if (!isLoggedIn()) return;
-        event.stopImmediatePropagation(); // logado: o ícone não reabre o login
+        event.stopImmediatePropagation(); // logado: o ícone não reabre o login, leva ao perfil
+        window.location.href = 'perfil.html';
     }, true);
     updateAccountMenu();
     window.addEventListener('acervo:auth-changed', updateAccountMenu);
@@ -679,11 +716,30 @@ function updateCartBadge() {
 const COVER_SELECTOR = '.book-cover, .cart-item-img, .product-image';
 const COVER_PLACEHOLDER = 'assets/img/placeholder-capa.svg';
 
+const COVER_TIMEOUT_MS = 8000;
+
 function setupCoverFallback() {
     const swap = (img) => {
         if (img.dataset.fallback) return; // evita laço se o próprio placeholder faltar
         img.dataset.fallback = '1';
         img.src = COVER_PLACEHOLDER;
+    };
+    // Capa externa que demora demais: troca pelo placeholder. O relógio só começa quando a imagem
+    // aparece na tela (imagens com loading="lazy" fora da tela não carregam, e isso não é falha).
+    const stalled = (img) => !img.complete || img.naturalWidth === 0;
+    const observer = 'IntersectionObserver' in window
+        ? new IntersectionObserver((entries) => entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            observer.unobserve(entry.target);
+            setTimeout(() => {
+                if (/^https?:/.test(entry.target.getAttribute('src') ?? '') && stalled(entry.target)) swap(entry.target);
+            }, COVER_TIMEOUT_MS);
+        }))
+        : null;
+    const watch = (img) => {
+        if (!observer || img.dataset.watched || !/^https?:/.test(img.getAttribute('src') ?? '')) return;
+        img.dataset.watched = '1';
+        observer.observe(img);
     };
     // 'error' não borbulha: a captura no document cobre também imagens criadas depois por JS
     document.addEventListener('error', (event) => {
@@ -692,7 +748,21 @@ function setupCoverFallback() {
     // Imagens que já falharam antes deste script rodar
     document.querySelectorAll(COVER_SELECTOR).forEach((img) => {
         if (img.complete && img.naturalWidth === 0) swap(img);
+        else watch(img);
     });
+    // Capas criadas ou trocadas depois por JS (prateleiras, busca, carrinho, página do produto)
+    new MutationObserver((mutations) => mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes') {
+            delete mutation.target.dataset.watched; // src mudou: vale um novo prazo
+            watch(mutation.target);
+            return;
+        }
+        mutation.addedNodes.forEach((node) => {
+            if (!(node instanceof Element)) return;
+            if (node.matches(COVER_SELECTOR)) watch(node);
+            node.querySelectorAll?.(COVER_SELECTOR).forEach(watch);
+        });
+    })).observe(document.body, {childList: true, subtree: true, attributes: true, attributeFilter: ['src']});
 }
 
 /* ==========================================================================
