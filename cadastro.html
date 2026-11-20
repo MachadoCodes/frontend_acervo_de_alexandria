@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://covers.openlibrary.org https://*.archive.org https://upload.wikimedia.org; connect-src 'self' https://api-acervo-alexandria-cnft.onrender.com; base-uri 'self'; form-action 'self'; object-src 'none'">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Crie sua conta no Acervo de Alexandria.">
     <meta name="theme-color" content="#071E3A">
@@ -58,7 +58,7 @@
                     <span class="material-symbols-outlined" aria-hidden="true">menu</span> Categorias
                 </button>
             </li>
-            <li class="category-item"><a href="resultado-busca.html?categoria=infantis">Infantil</a></li>
+            <li class="category-item"><a href="resultado-busca.html">Catálogo</a></li><li class="category-item"><a href="resultado-busca.html?categoria=infantis">Infantil</a></li>
             <li class="category-item"><a href="resultado-busca.html?categoria=infantojuvenil">Juvenil</a></li>
             <li class="category-item"><a href="resultado-busca.html?categoria=ficcao">Ficção</a></li>
             <li class="category-item"><a href="resultado-busca.html?categoria=romance">Romance</a></li>
@@ -94,6 +94,7 @@
 </header>
 
 <main class="main-content register-layout" id="main" tabindex="-1">
+    <p class="demo-notice" role="note"><strong>Ambiente de demonstração:</strong> não use dados reais (CPF, cartão, endereço). Use apenas dados fictícios.</p>
     <div class="register-container">
         <div class="register-header">
             <h1 class="register-title">Criar uma conta</h1>
@@ -109,7 +110,7 @@
 
                 <div class="form-group">
                     <label for="reg-name">Nome completo <span class="required">*</span></label>
-                    <input type="text" id="reg-name" name="name" class="form-input" required autocomplete="name">
+                    <input type="text" id="reg-name" name="name" class="form-input" required autocomplete="name" maxlength="100">
                 </div>
 
                 <!-- Nova linha agrupando País e Celular -->
@@ -559,7 +560,7 @@
                                 <option value="+263">+263 (Zimbábue)</option>
                             </select>
                             <input type="tel" id="reg-phone" name="phone" class="form-input phone-number"
-                                   placeholder="(00) 00000-0000" autocomplete="tel-national">
+                                   placeholder="(00) 00000-0000" autocomplete="tel-national" maxlength="20">
                         </div>
                     </div>
                 </div>
@@ -610,7 +611,7 @@
                 <div class="form-group">
                     <label for="reg-email">E-mail <span class="required">*</span></label>
                     <input type="email" id="reg-email" name="email" class="form-input" placeholder="Insira seu email" required
-                           autocomplete="email">
+                           autocomplete="email" maxlength="150">
                 </div>
 
                 <div class="form-row">
@@ -618,7 +619,7 @@
                         <label for="reg-password">Senha <span class="required">*</span></label>
                         <div class="password-wrapper">
                             <input type="password" id="reg-password" name="password" class="form-input" required minlength="8"
-                                   autocomplete="new-password">
+                                   autocomplete="new-password" maxlength="72">
                             <button type="button" class="btn-toggle-password" aria-label="Mostrar senha">
                                 <span class="material-symbols-outlined">visibility_off</span>
                             </button>
@@ -629,7 +630,7 @@
                         <label for="reg-password-confirm">Confirmar senha <span class="required">*</span></label>
                         <div class="password-wrapper">
                             <input type="password" id="reg-password-confirm" name="passwordConfirm" class="form-input" required
-                                   autocomplete="new-password">
+                                   autocomplete="new-password" maxlength="72">
                             <button type="button" class="btn-toggle-password" aria-label="Mostrar senha">
                                 <span class="material-symbols-outlined">visibility_off</span>
                             </button>

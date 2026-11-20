@@ -146,6 +146,7 @@ export function livroToBook(livro) {
         year: Number.isInteger(livro.anoPublicacao) ? livro.anoPublicacao : null,
         stock: Number.isInteger(livro.quantidadeEstoque) ? livro.quantidadeEstoque : null,
         rating: Number.isFinite(Number(livro.avaliacao)) ? Number(livro.avaliacao) : null,
+        format: typeof livro.formato === 'string' ? livro.formato : null,
         specs: {
             'Editora': livro.editora ? String(livro.editora) : '',
             'Idioma': livro.idioma ? String(livro.idioma) : '',
@@ -194,7 +195,21 @@ async function loadReferencedBooks() {
     }));
 }
 
+/** Aviso para quando a API demora (no Render grátis, a 1ª chamada pode levar ~1 minuto: servidor acordando). */
+function showWakingNotice() {
+    const notice = document.createElement('div');
+    notice.className = 'api-waking';
+    notice.setAttribute('role', 'status');
+    notice.textContent = 'Conectando ao servidor… na primeira visita pode levar até 1 minuto.';
+    document.body.prepend(notice);
+    return notice;
+}
+
 if (USE_API) {
+    let wakingNotice = null;
+    const wakingTimer = setTimeout(() => {
+        wakingNotice = showWakingNotice();
+    }, 1500);
     try {
         // Só um teste de que a API responde (no Render grátis a 1ª chamada pode demorar ~1 min: servidor acordando)
         const livros = await listarLivros({size: 12, timeout: API_TIMEOUT_MS});
@@ -205,5 +220,8 @@ if (USE_API) {
         }
     } catch {
         /* API indisponível: mantém o catálogo de exemplo */
+    } finally {
+        clearTimeout(wakingTimer);
+        wakingNotice?.remove();
     }
 }
