@@ -59,16 +59,36 @@ const checkedValues = (name) =>
 
 const useApi = catalogSource === 'api';
 
-function matches(book) {
-    // Com a API o texto da busca já foi filtrado pelo servidor
-    if (query && !useApi) {
-        const haystack = normalize(`${book.title} ${book.author}`);
-        if (!normalize(query).split(/\s+/).every((word) => haystack.includes(word))) return false;
-    }
-    if (categoryLabel && !book.categories.includes(category)) return false;
+// Palavras da busca, sem acento e em minúsculas: o livro precisa ter TODAS (em qualquer ordem) no título ou autor
+const queryWords = normalize(query).split(/\s+/).filter(Boolean);
 
+// Filtros extras (só com a API): valores da barra lateral -> dados do livro
+const FORMATS = {comum: 'CAPA_COMUM', dura: 'CAPA_DURA', ebook: 'EBOOK', audiobook: 'AUDIOBOOK'};
+
+function matches(book) {
+    if (queryWords.length) {
+        const haystack = normalize(`${book.title} ${book.author}`);
+        if (!queryWords.every((word) => haystack.includes(word))) return false;
+    }
+
+    // Gênero: só os quadradinhos marcados filtram. Nenhum marcado = todos os livros.
+    // (a categoria da URL apenas pré-marca o quadradinho correspondente)
     const genres = checkedValues('gen');
     if (genres.length && !genres.some((genre) => book.categories.includes(genre))) return false;
+
+    if (useApi) {
+        const formats = checkedValues('formato').map((key) => FORMATS[key]);
+        if (formats.length && !formats.includes(book.format)) return false;
+
+        const minRatings = checkedValues('aval').map(Number);
+        if (minRatings.length && !(book.rating !== null && book.rating >= Math.min(...minRatings))) return false;
+
+        const years = checkedValues('ano');
+        if (years.length) {
+            const inYears = years.some((year) => (year === 'anteriores' ? book.year !== null && book.year < 2024 : book.year === Number(year)));
+            if (!inYears) return false;
+        }
+    }
 
     const ranges = checkedValues('preco').map((key) => PRICE_RANGES[key]);
     const min = minPrice.value === '' ? null : Number(minPrice.value) * 100;
@@ -114,14 +134,21 @@ function render() {
     moreButton.textContent = loading ? 'CARREGANDO…' : 'CARREGAR MAIS';
 }
 
+// O servidor procura uma só expressão no título. Para aceitar palavras em qualquer ordem, mandamos a
+// palavra mais longa e o front filtra o resto (todas as palavras, no título ou no autor).
+const serverTerm = query.split(/\s+/).filter(Boolean).sort((a, b) => b.length - a.length)[0] ?? '';
+const MIN_VISIBLE = 24; // enquanto houver menos que isso na tela (por causa dos filtros), busca mais páginas
+const MAX_AUTO_PAGES = 6;
+let autoPages = 0;
+
 async function loadMore() {
     if (loading || !hasMore) return;
     loading = true;
     loadError = '';
     render();
     try {
-        const data = query
-            ? await buscarLivrosPorTitulo(query, {page})
+        const data = serverTerm
+            ? await buscarLivrosPorTitulo(serverTerm, {page})
             : await listarPaginaLivros({page});
         results = results.concat(registerBooks(data.content.map(livroToBook)));
         total = data.total;
@@ -133,6 +160,11 @@ async function loadMore() {
     } finally {
         loading = false;
         render();
+    }
+    // Filtros deixaram poucos resultados na tela: continua buscando algumas páginas sozinho
+    if (hasMore && !loadError && results.filter(matches).length < MIN_VISIBLE && autoPages < MAX_AUTO_PAGES) {
+        autoPages += 1;
+        loadMore();
     }
 }
 
@@ -148,7 +180,39 @@ document.querySelector('.btn-price-apply').addEventListener('click', render);
     })
 );
 
-// Categorias ainda não existem na API: sem busca por texto, não há o que listar
-if (useApi && categoryLabel && !query) hasMore = false;
+// Filtros que dependem de dados da API
+if (useApi) {
+    // Gênero: a API ainda não tem categorias, então esse filtro não tem como funcionar
+    const genreGroup = document.querySelector('input[name="gen"]')?.closest('fieldset');
+    genreGroup?.querySelectorAll('input').forEach((box) => {
+        box.checked = false;
+        box.disabled = true;
+    });
+    if (genreGroup) {
+        const note = document.createElement('p');
+        note.className = 'filter-note';
+        note.textContent = 'Disponível quando a API tiver categorias.';
+        genreGroup.append(note);
+    }
+    // Formato, avaliação e lançamento já vêm da API (valem para os livros já carregados na tela)
+    ['formato', 'aval', 'ano'].forEach((name) => {
+        document.querySelectorAll(`input[name="${name}"]`).forEach((box) => {
+            box.disabled = false;
+        });
+        document.querySelector(`input[name="${name}"]`)?.closest('fieldset')?.querySelector('.filter-note')?.remove();
+    });
+    // Página de categoria sem categorias na API: avisa e oferece o catálogo completo
+    if (categoryLabel && !query) {
+        hasMore = false;
+        const text = emptyState.querySelector('p');
+        const link = emptyState.querySelector('a');
+        if (text) text.textContent = 'As categorias ainda não estão disponíveis. Veja o catálogo completo ou use a busca.';
+        if (link) {
+            link.href = 'resultado-busca.html';
+            link.textContent = 'Ver catálogo completo';
+        }
+    }
+}
+
 render();
 if (useApi && hasMore) loadMore();
