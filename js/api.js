@@ -70,6 +70,9 @@ export function currentUser() {
 export function logout() {
     try {
         localStorage.removeItem(TOKEN_KEY);
+        // Dados da compra em andamento (nome, endereço) não devem sobrar para a próxima pessoa do computador
+        sessionStorage.removeItem('alexandria_delivery');
+        sessionStorage.removeItem('alexandria_order');
     } catch {
         /* ignora */
     }
