@@ -3076,3 +3076,27 @@ button.forgot-password {
 .profile-status[hidden] {
     display: none;
 }
+
+/* Avisos: servidor acordando e ambiente de demonstração */
+.api-waking {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    padding: 10px 16px;
+    background: var(--color-primary-gold);
+    color: var(--color-primary-blue);
+    font-weight: 600;
+    text-align: center;
+}
+
+.demo-notice {
+    margin: 0 auto 16px;
+    padding: 10px 14px;
+    max-width: 960px;
+    border: 1px solid var(--color-primary-gold);
+    border-radius: 6px;
+    background: #fff8e1;
+    color: #5d4500;
+    font-size: 0.9rem;
+    text-align: center;
+}
