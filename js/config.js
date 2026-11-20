@@ -13,7 +13,19 @@ function storedUrl() {
     }
 }
 
-const rawUrl = window.ACERVO_API_URL || storedUrl() || 'https://api-acervo-alexandria-cnft.onrender.com';
+const DEFAULT_API_URL = 'https://api-acervo-alexandria-cnft.onrender.com';
+
+// Só aceita https:// (ou http://localhost para desenvolvimento): impede apontar o site para um servidor qualquer
+function isAllowedApiUrl(value) {
+    try {
+        const url = new URL(value);
+        return url.protocol === 'https:' || (url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname));
+    } catch {
+        return false;
+    }
+}
+
+const rawUrl = [window.ACERVO_API_URL, storedUrl()].find((value) => value && isAllowedApiUrl(value)) || DEFAULT_API_URL;
 
 export const API_BASE_URL = String(rawUrl).replace(/\/+$/, '');
 
