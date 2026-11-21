@@ -316,9 +316,19 @@ function initPayment() {
             setTimeout(() => finish(order), 900);
             return;
         }
-        submitOrderToApi(readCart())
-            // O total mostrado é o que a pessoa viu (frete, cupom e Pix incluídos); a API só guarda o valor dos livros
-            .then((apiOrder) => finish({...order, id: `AA-${String(apiOrder.id).padStart(6, '0')}`}))
+        submitOrderToApi({
+            items: readCart(),
+            delivery,
+            paymentType: method,
+            installments: document.getElementById('cardInstallments')?.value,
+            coupon: document.getElementById('order-summary')?.dataset.promoCode || '',
+        })
+            // O total oficial é o que a API calculou (livros + frete - cupom)
+            .then((apiOrder) => finish({
+                ...order,
+                id: `AA-${String(apiOrder.id).padStart(6, '0')}`,
+                total: formatCents(Math.round(Number(apiOrder.valorTotal) * 100)),
+            }))
             .catch((error) => {
                 updatePaymentView(); // reativa o botão e restaura o rótulo
                 orderError.textContent = error.message || 'Não foi possível finalizar o pedido.';

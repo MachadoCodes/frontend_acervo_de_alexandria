@@ -131,6 +131,19 @@ const COVER_PLACEHOLDER = 'assets/img/placeholder-capa.svg';
 // Enum FormatoLivro da API -> texto para exibir
 const FORMATS = {CAPA_COMUM: 'Capa comum', CAPA_DURA: 'Capa dura', EBOOK: 'E-book', AUDIOBOOK: 'Audiolivro'};
 
+/** Só aceita capa https (qualquer outra coisa cai no fallback). */
+function safeCoverUrl(url) {
+    try {
+        const parsed = new URL(String(url ?? ''));
+        return parsed.protocol === 'https:' ? parsed.href : null;
+    } catch {
+        return null;
+    }
+}
+
+const slugify = (text) => String(text).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
 /** LivroResponseDTO -> livro do front. Valores inesperados da API viram padrões seguros. */
 export function livroToBook(livro) {
     const price = Math.round(Number(livro.preco) * 100);
@@ -140,9 +153,10 @@ export function livroToBook(livro) {
         // O dataset usa "A/B/C" para vários autores
         author: String(livro.autor ?? '').split('/').map((name) => name.replace(/\s+/g, ' ').trim()).filter(Boolean).join(', '),
         price: Number.isFinite(price) && price >= 0 ? price : 0,
-        cover: coverUrlForIsbn(livro.isbn) ?? COVER_PLACEHOLDER,
-        categories: [], // a API ainda não tem categorias
-        synopsis: '', // nem sinopse
+        cover: safeCoverUrl(livro.urlCapa) ?? coverUrlForIsbn(livro.isbn) ?? COVER_PLACEHOLDER,
+        categories: livro.categoria ? [slugify(livro.categoria)] : [],
+        categoryLabel: livro.categoria ? String(livro.categoria) : '',
+        synopsis: typeof livro.sinopse === 'string' ? livro.sinopse : '',
         year: Number.isInteger(livro.anoPublicacao) ? livro.anoPublicacao : null,
         stock: Number.isInteger(livro.quantidadeEstoque) ? livro.quantidadeEstoque : null,
         rating: Number.isFinite(Number(livro.avaliacao)) ? Number(livro.avaliacao) : null,

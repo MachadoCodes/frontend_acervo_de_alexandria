@@ -1,5 +1,5 @@
 // js/perfil.js — página "Meu perfil": ver e editar os dados da conta (API) e a foto (neste navegador).
-import {isLoggedIn, currentUser, login, meuPerfil, atualizarUsuario, ApiError} from './api.js';
+import {isLoggedIn, currentUser, meuPerfil, atualizarMeuPerfil, alterarMinhaSenha, ApiError} from './api.js';
 import {getAvatar, saveAvatarFromFile, removeAvatar, setDisplayName} from './conta.js';
 
 const $ = (id) => document.getElementById(id);
@@ -16,8 +16,6 @@ const photoRemove = $('profile-photo-remove');
 const photoError = $('profile-photo-error');
 
 let profile = null;
-
-const digits = (value) => value.replace(/\D/g, '');
 
 function showAvatar() {
     const email = currentUser()?.email;
@@ -106,7 +104,6 @@ form.addEventListener('submit', async (event) => {
     const nome = fields.nome.value.trim();
     const movel = fields.telefoneMovel.value.trim();
     const endereco = fields.endereco.value.trim();
-    const cpf = digits(fields.cpf.value);
     const senhaAtual = fields.senha.value;
     const novaSenha = fields.novaSenha.value;
 
@@ -115,34 +112,23 @@ form.addEventListener('submit', async (event) => {
         saveError.hidden = false;
     };
     if (!nome || !movel || !endereco) return fail('Preencha nome, celular e endereço.');
-    if (cpf.length !== 11) return fail('Informe o CPF com 11 números.');
-    if (!senhaAtual) return fail('Informe a sua senha atual.');
+    if (novaSenha && !senhaAtual) return fail('Para trocar a senha, informe a senha atual.');
     if (novaSenha && (novaSenha.length < 8 || novaSenha.length > 72)) return fail('A nova senha deve ter de 8 a 72 caracteres.');
 
     saveButton.disabled = true;
     saveButton.textContent = 'SALVANDO…';
     try {
-        // A API não confere a senha na edição: confirmamos por um login antes de gravar
-        try {
-            await login(profile.email, senhaAtual);
-        } catch (error) {
-            throw error instanceof ApiError && error.status !== 0
-                ? new ApiError('Senha atual incorreta.', 400)
-                : error;
-        }
-        const updated = await atualizarUsuario(profile.id, {
+        const updated = await atualizarMeuPerfil({
             nome,
-            cpf,
             telefoneFixo: fields.telefoneFixo.value.trim() || null,
             telefoneMovel: movel,
-            email: profile.email,
-            senha: novaSenha || senhaAtual,
             endereco,
         });
+        // A troca de senha é um passo à parte: a API confere a senha atual
+        if (novaSenha) await alterarMinhaSenha(senhaAtual, novaSenha);
         profile = updated;
         fillForm(updated);
         setDisplayName(updated.email, updated.nome);
-        fields.cpf.value = '';
         fields.senha.value = '';
         fields.novaSenha.value = '';
         saveOk.hidden = false;

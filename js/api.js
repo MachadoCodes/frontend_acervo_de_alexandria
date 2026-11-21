@@ -82,7 +82,9 @@ export function logout() {
 /* ----- Requisição base ----- */
 async function request(path, {method = 'GET', body, auth = false, timeout = API_TIMEOUT_MS} = {}) {
     const headers = {Accept: 'application/json'};
-    if (body !== undefined) headers['Content-Type'] = 'application/json';
+    const isForm = typeof FormData !== 'undefined' && body instanceof FormData;
+    // Com FormData o navegador define o Content-Type (com o boundary) sozinho
+    if (body !== undefined && !isForm) headers['Content-Type'] = 'application/json';
     if (auth) {
         const token = getToken();
         if (!token) throw new ApiError('Faça login para continuar.', 401);
@@ -96,7 +98,7 @@ async function request(path, {method = 'GET', body, auth = false, timeout = API_
         response = await fetch(`${API_BASE_URL}${path}`, {
             method,
             headers,
-            body: body === undefined ? undefined : JSON.stringify(body),
+            body: body === undefined ? undefined : (isForm ? body : JSON.stringify(body)),
             signal: controller.signal,
         });
     } catch {
@@ -136,18 +138,35 @@ export async function login(email, senha) {
 export const registrarUsuario = (dto) => request('/usuarios', {method: 'POST', body: dto});
 
 /* ----- Perfil do usuário (exigem login) ----- */
-// A API ainda não tem "GET /usuarios/me": procuramos o usuário logado pelo e-mail na lista.
-export async function meuPerfil() {
-    const email = currentUser()?.email?.toLowerCase();
-    const lista = await request('/usuarios', {auth: true});
-    const perfil = Array.isArray(lista) ? lista.find((u) => String(u?.email).toLowerCase() === email) : null;
-    if (!perfil) throw new ApiError('Não encontramos o seu perfil.', 404);
-    return perfil;
+/** Perfil do usuário logado (GET /usuarios/me). */
+export const meuPerfil = () => request('/usuarios/me', {auth: true});
+
+/** dto = {nome, telefoneFixo?, telefoneMovel, endereco} (e-mail e CPF não mudam por aqui) */
+export const atualizarMeuPerfil = (dto) => request('/usuarios/me', {method: 'PUT', body: dto, auth: true});
+
+/** Troca de senha: a API confere a senha atual. */
+export const alterarMinhaSenha = (senhaAtual, novaSenha) =>
+    request('/usuarios/me/senha', {method: 'PATCH', body: {senhaAtual, novaSenha}, auth: true});
+
+/** Envia a foto (JPG, PNG ou WebP, até 2 MB) como multipart, no campo "foto". */
+export function enviarMinhaFoto(file) {
+    const form = new FormData();
+    form.append('foto', file);
+    return request('/usuarios/me/foto', {method: 'POST', body: form, auth: true});
 }
 
-/** dto = {nome, cpf, telefoneFixo?, telefoneMovel, email, senha, endereco} (a API exige todos, inclusive CPF e senha) */
-export const atualizarUsuario = (id, dto) =>
-    request(`/usuarios/${encodeURIComponent(id)}`, {method: 'PUT', body: dto, auth: true});
+/** Foto do perfil como Blob (o <img> não envia o Bearer). Devolve null se ainda não houver foto. */
+export async function buscarMinhaFoto() {
+    const token = getToken();
+    if (!token) return null;
+    let response;
+    try {
+        response = await fetch(`${API_BASE_URL}/usuarios/me/foto`, {headers: {Authorization: `Bearer ${token}`}});
+    } catch {
+        return null;
+    }
+    return response.ok ? response.blob() : null;
+}
 
 /* ----- Livros (públicos) ----- */
 
@@ -186,5 +205,10 @@ export const adicionarAoCarrinho = (livroId, quantidade) =>
     request('/carrinhos/itens', {method: 'POST', body: {livroId, quantidade}, auth: true});
 export const removerDoCarrinho = (livroId) =>
     request(`/carrinhos/itens/${encodeURIComponent(livroId)}`, {method: 'DELETE', auth: true});
-export const criarPedido = () => request('/pedidos', {method: 'POST', auth: true});
+/**
+ * dto = {itens:[{livroId, quantidade}], entrega:{metodo, nome, sobrenome, email, pais, cep, estado, cidade,
+ * endereco, numero, complemento?, observacoes?}, pagamento:{metodo, parcelas}, cupom?}
+ * A API calcula subtotal, frete, desconto e total; o front só exibe o que ela devolve.
+ */
+export const criarPedido = (dto) => request('/pedidos', {method: 'POST', body: dto, auth: true});
 export const historicoPedidos = () => request('/pedidos/historico', {auth: true});
