@@ -1,13 +1,14 @@
 // js/entrega.js — etapa de entrega (carregado como módulo)
 import {readCart, cartSubtotalCents, cartCount, SHIPPING_CENTS} from './store.js';
 import {saveDelivery} from './store.js';
+import {isLoggedIn, login, currentUser, ApiError} from './api.js';
 import {formatCents, pluralize} from './ui.js';
 
 const items = readCart();
 // Sem itens não há o que entregar: volta para o carrinho
 if (items.length === 0) window.location.replace('carrinho.html');
 
-document.addEventListener('DOMContentLoaded', () => {
+const init = () => {
     const form = document.querySelector('.delivery-form');
     const loginBlock = document.getElementById('login-block');
     const guestBlock = document.getElementById('guest-block');
@@ -43,12 +44,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /** Se a pessoa já está logada, sugere o e-mail da conta no campo de e-mail da entrega. */
+    function prefillEmail() {
+        const email = currentUser()?.email;
+        const field = document.getElementById('guestEmail');
+        if (email && field && !field.value) field.value = email;
+    }
+
     function updateBlocks() {
         const answer = form.querySelector('input[name="has_account"]:checked')?.value;
 
-        setBlockVisible(loginBlock, answer === 'yes');
-        setBlockVisible(guestBlock, answer === 'no');
-        setBlockVisible(checkoutFooter, answer === 'no');
+        // Quem tem conta entra aqui mesmo (login de verdade) e também informa o endereço de entrega
+        setBlockVisible(loginBlock, answer === 'yes' && !isLoggedIn());
+        setBlockVisible(guestBlock, Boolean(answer));
+        setBlockVisible(checkoutFooter, Boolean(answer));
+        prefillEmail();
         updateSummary();
     }
 
@@ -74,11 +84,27 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'pagamento.html';
     });
 
-    /* --- Já tenho conta: MOCK de login. Em produção, autentique no Spring Security. --- */
-    document.getElementById('btn-login-continue')?.addEventListener('click', () => {
-        if (!form.reportValidity()) return;
-        saveDelivery({member: true, method: 'standard'});
-        window.location.href = 'pagamento.html';
+    /* --- Já tenho conta: login de verdade na API; depois a pessoa preenche o endereço --- */
+    const loginError = document.getElementById('login-checkout-error');
+    document.getElementById('btn-login-continue')?.addEventListener('click', async (event) => {
+        const emailField = document.getElementById('loginEmail');
+        const senhaField = document.getElementById('loginSenha');
+        if (!emailField.reportValidity() || !senhaField.reportValidity()) return;
+        const button = event.currentTarget;
+        button.disabled = true;
+        loginError.hidden = true;
+        try {
+            await login(emailField.value.trim(), senhaField.value);
+            senhaField.value = '';
+            updateBlocks(); // esconde o login e sugere o e-mail da conta
+        } catch (error) {
+            loginError.textContent = error instanceof ApiError && error.status === 0
+                ? error.message
+                : 'E-mail ou senha incorretos.';
+            loginError.hidden = false;
+        } finally {
+            button.disabled = false;
+        }
     });
 
     document.getElementById('btn-forgot-from-checkout')?.addEventListener('click', () => {
@@ -107,4 +133,5 @@ document.addEventListener('DOMContentLoaded', () => {
             if (guestEmail.validity.valid) showEmailError(false);
         });
     }
-});
+};
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
