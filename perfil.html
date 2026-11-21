@@ -155,23 +155,12 @@
                     </div>
                 </fieldset>
 
-                <fieldset class="form-section">
-                    <legend class="section-title">Confirme para salvar</legend>
-                    <p class="profile-hint">Por segurança, informe o seu CPF e a sua senha atual.</p>
-                    <div class="form-group">
-                        <label for="perfil-cpf">CPF <span class="required">*</span></label>
-                        <input type="text" id="perfil-cpf" name="cpf" class="form-input" required inputmode="numeric" placeholder="000.000.000-00" autocomplete="off">
-                    </div>
-                    <div class="form-group">
-                        <label for="perfil-senha">Senha atual <span class="required">*</span></label>
-                        <input type="password" id="perfil-senha" name="senha" class="form-input" required autocomplete="current-password">
-                    </div>
-                    <div class="form-group">
-                        <label for="perfil-nova-senha">Nova senha (opcional)</label>
-                        <input type="password" id="perfil-nova-senha" name="novaSenha" class="form-input" minlength="8" maxlength="72" autocomplete="new-password">
-                        <p class="profile-hint">Deixe em branco para manter a senha atual.</p>
-                    </div>
-                </fieldset>
+                <legend class="section-title">Trocar a senha</legend>
+                <p class="profile-hint">Só preencha se quiser trocar a senha: informe a senha atual e a nova.</p>
+                <div class="form-group">
+                    <label for="perfil-senha">Senha atual (só para trocar a senha)</label>
+                    <input type="password" id="perfil-senha" name="senha" class="form-input" autocomplete="current-password">
+                </div>
 
                 <p class="form-submit-error" id="profile-save-error" role="alert" hidden></p>
                 <p class="profile-success" id="profile-save-ok" role="status" hidden>Dados atualizados com sucesso.</p>
