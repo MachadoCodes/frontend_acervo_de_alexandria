@@ -13,7 +13,7 @@ function storedUrl() {
     }
 }
 
-const DEFAULT_API_URL = 'https://api-acervo-alexandria-cnft.onrender.com';
+const DEFAULT_API_URL = 'https://api-acervo-alexandria.onrender.com';
 
 // Só aceita https:// (ou http://localhost para desenvolvimento): impede apontar o site para um servidor qualquer
 function isAllowedApiUrl(value) {
