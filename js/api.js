@@ -205,5 +205,10 @@ export const adicionarAoCarrinho = (livroId, quantidade) =>
     request('/carrinhos/itens', {method: 'POST', body: {livroId, quantidade}, auth: true});
 export const removerDoCarrinho = (livroId) =>
     request(`/carrinhos/itens/${encodeURIComponent(livroId)}`, {method: 'DELETE', auth: true});
-export const criarPedido = () => request('/pedidos', {method: 'POST', auth: true});
+/**
+ * dto = {itens:[{livroId, quantidade}], entrega:{metodo, nome, sobrenome, email, pais, cep, estado, cidade,
+ * endereco, numero, complemento?, observacoes?}, pagamento:{metodo, parcelas}, cupom?}
+ * A API calcula subtotal, frete, desconto e total; o front só exibe o que ela devolve.
+ */
+export const criarPedido = (dto) => request('/pedidos', {method: 'POST', body: dto, auth: true});
 export const historicoPedidos = () => request('/pedidos/historico', {auth: true});
