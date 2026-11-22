@@ -114,7 +114,7 @@ function writeSession(key, value) {
 export function saveDelivery(data) {
     const clean = {method: data.method === 'express' ? 'express' : 'standard', member: data.member === true};
     DELIVERY_FIELDS.forEach((field) => {
-        if (typeof data[field] === 'string') clean[field] = data[field].trim().slice(0, 200);
+        if (typeof data[field] === 'string') clean[field] = data[field].trim().slice(0, 255);
     });
     writeSession(DELIVERY_KEY, clean);
 }

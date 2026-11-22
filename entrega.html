@@ -154,18 +154,18 @@
                     <div class="form-group">
                         <label for="guestEmail">E-mail <span class="required" aria-hidden="true">*</span></label>
                         <input type="email" id="guestEmail" name="email" class="form-input"
-                               autocomplete="email" placeholder="Digite seu e-mail" required>
+                               autocomplete="email" placeholder="Digite seu e-mail" maxlength="150" required>
                         <div class="error-message" id="guestEmail-error" hidden>Por favor, insira um e-mail válido</div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label for="guestNome">Nome <span class="required" aria-hidden="true">*</span></label>
-                            <input type="text" id="guestNome" name="nome" class="form-input" autocomplete="given-name" required>
+                            <input type="text" id="guestNome" name="nome" class="form-input" autocomplete="given-name" maxlength="74" required>
                         </div>
                         <div class="form-group">
                             <label for="guestSobrenome">Sobrenome <span class="required" aria-hidden="true">*</span></label>
-                            <input type="text" id="guestSobrenome" name="sobrenome" class="form-input" autocomplete="family-name" required>
+                            <input type="text" id="guestSobrenome" name="sobrenome" class="form-input" autocomplete="family-name" maxlength="75" required>
                         </div>
                     </div>
 
@@ -189,28 +189,28 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="guestEstado">Estado <span class="required" aria-hidden="true">*</span></label>
-                            <input type="text" id="guestEstado" name="estado" class="form-input" autocomplete="address-level1" required>
+                            <input type="text" id="guestEstado" name="estado" class="form-input" autocomplete="address-level1" maxlength="50" required>
                         </div>
                         <div class="form-group">
                             <label for="guestCidade">Cidade <span class="required" aria-hidden="true">*</span></label>
-                            <input type="text" id="guestCidade" name="cidade" class="form-input" autocomplete="address-level2" required>
+                            <input type="text" id="guestCidade" name="cidade" class="form-input" autocomplete="address-level2" maxlength="100" required>
                         </div>
                     </div>
 
                     <div class="form-row address-row">
                         <div class="form-group">
                             <label for="guestEndereco">Endereço <span class="required" aria-hidden="true">*</span></label>
-                            <input type="text" id="guestEndereco" name="endereco" class="form-input" autocomplete="address-line1" required>
+                            <input type="text" id="guestEndereco" name="endereco" class="form-input" autocomplete="address-line1" maxlength="255" required>
                         </div>
                         <div class="form-group">
                             <label for="guestNumero">Número <span class="required" aria-hidden="true">*</span></label>
-                            <input type="text" id="guestNumero" name="numero" class="form-input" required>
+                            <input type="text" id="guestNumero" name="numero" class="form-input" maxlength="20" required>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="guestComplemento">Complemento</label>
-                        <input type="text" id="guestComplemento" name="complemento" class="form-input" autocomplete="address-line2">
+                        <input type="text" id="guestComplemento" name="complemento" class="form-input" autocomplete="address-line2" maxlength="100">
                     </div>
 
                     <p class="required-legend">* Campos obrigatórios</p>
@@ -234,7 +234,7 @@
                     <div class="form-group">
                         <label for="guestNotas">Notas do pedido</label>
                         <textarea id="guestNotas" name="notas" class="form-input" rows="3"
-                                  placeholder="Os pedidos podem chegar em pacotes separados..."></textarea>
+                                  placeholder="Os pedidos podem chegar em pacotes separados..." maxlength="255"></textarea>
                     </div>
                 </div>
 
