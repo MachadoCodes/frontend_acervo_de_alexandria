@@ -6,7 +6,7 @@ import {findBook} from './catalogo.js';
 
 export const CART_KEY = 'alexandria_cart';
 export const WISHLIST_KEY = 'alexandria_wishlist';
-export const SHIPPING_CENTS = {standard: 1500, express: 2990};
+export const SHIPPING_CENTS = {standard: 1590, express: 3290};
 export const MAX_QTY = 99;
 
 function readJson(key) {

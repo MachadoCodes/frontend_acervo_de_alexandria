@@ -98,7 +98,8 @@ const init = () => {
             senhaField.value = '';
             updateBlocks(); // esconde o login e sugere o e-mail da conta
         } catch (error) {
-            loginError.textContent = error instanceof ApiError && error.status === 0
+            // 0 = sem conexão, 429 = muitas tentativas: a API manda a mensagem certa
+            loginError.textContent = error instanceof ApiError && [0, 429].includes(error.status)
                 ? error.message
                 : 'E-mail ou senha incorretos.';
             loginError.hidden = false;

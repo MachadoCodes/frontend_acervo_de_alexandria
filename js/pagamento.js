@@ -19,11 +19,11 @@ const METHOD_LABELS = {
 /*
 - Regras APENAS DE EXIBIÇÃO. O valor oficial deve ser calculado e validado no back-end.
 - Premissas: Pix = 5% de desconto sobre os livros; cripto = 2% sobre o total do pedido.
- /*
-- Regras APENAS DE EXIBIÇÃO. O valor oficial é calculado pela API (livros + frete - cupom).
-- Pix e criptomoeda não alteram o valor: a API não tem desconto/taxa por forma de pagamento.
  */
-const PRICE_ADJUSTMENTS = {};
+const PRICE_ADJUSTMENTS = {
+    pix: {label: 'Desconto Pix (5%)', rate: -0.05, base: 'subtotal'},
+    crypto: {label: 'Taxa de criptomoeda (2%)', rate: 0.02, base: 'total'},
+};
 
 const MAX_INSTALLMENTS = 4;
 
@@ -156,8 +156,7 @@ function initPayment() {
         const method = form.querySelector('input[name="payment_type"]:checked')?.value;
         const rule = PRICE_ADJUSTMENTS[method];
 
-        let promoDiscountCents = 0; // abatimento nos livros
-        let shippingDiscountCents = 0; // cupom de frete grátis
+        let promoDiscountCents = 0;
 
         // 1. Aplica desconto do cupom (lido do HTML data attributes configurados pelo mock)
         if (summary.dataset.promoCode) {
@@ -166,8 +165,8 @@ function initPayment() {
 
             if (type === 'percent') {
                 promoDiscountCents = Math.round(subtotalCents * val);
-            } else if (type === 'shipping') {
-                shippingDiscountCents = shippingCents;
+            } else if (type === 'fixed') {
+                promoDiscountCents = val;
             }
 
             const promoLine = document.getElementById('promo-line');
@@ -177,7 +176,7 @@ function initPayment() {
             if (promoLine && promoLabel && promoValue) {
                 promoLine.hidden = false;
                 promoLabel.textContent = `Cupom (${summary.dataset.promoCode})`;
-                promoValue.textContent = `− ${formatCents(promoDiscountCents + shippingDiscountCents)}`;
+                promoValue.textContent = `− ${formatCents(promoDiscountCents)}`;
             }
         } else {
             const promoLine = document.getElementById('promo-line');
@@ -186,7 +185,7 @@ function initPayment() {
 
         // 2. Calcula novo subtotal para aplicar o Pix/Cripto por cima (em cascata)
         const subtotalWithPromo = Math.max(0, subtotalCents - promoDiscountCents);
-        const baseTotalCents = subtotalWithPromo + shippingCents - shippingDiscountCents;
+        const baseTotalCents = subtotalWithPromo + shippingCents;
 
         // 3. Aplica regras do método de pagamento
         let adjustment = 0;
@@ -358,11 +357,10 @@ function initPromo() {
 
     if (!promoForm || !promoInput || !promoMessage || !submitBtn) return;
 
-    // Mesmos cupons que a API aceita hoje (PedidoService). Quem decide o valor final é a API.
+    // Regras simulando a resposta da futura API Spring Boot
     const MOCK_API_COUPONS = {
-        'ALEXANDRIA10': { type: 'percent', value: 0.10 }, // 10% sobre os livros
-        'ALEXANDRIA20': { type: 'percent', value: 0.20 }, // 20% sobre os livros
-        'FRETEGRATIS': { type: 'shipping', value: 0 }     // frete grátis
+        'ALEXANDRIA10': { type: 'percent', value: 0.10 }, // 10% de desconto
+        'BEMVINDO20': { type: 'fixed', value: 2000 }      // 2000 centavos = R$ 20,00
     };
 
     let appliedCouponCode = null;
